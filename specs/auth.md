@@ -68,7 +68,7 @@ After **5** failed password attempts for a username, block further tries for ~**
 | Function | Auth |
 | --- | --- |
 | `login`, `logout`, `getSession` | Public (no token) |
-| `getMeta`, `getHomeContent`, `getNextProblem`, `checkAnswer` | Require valid `token` via `requireUser` |
+| `getMeta`, `getHomeContent`, `getNextProblem`, `checkAnswer`, `revealAnswer` | Require valid `token` via `requireUser` |
 
 Friendly errors: “Please sign in…”, “Session expired…”, “Incorrect username or password.”, lockout message.
 

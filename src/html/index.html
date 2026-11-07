@@ -503,6 +503,12 @@
                 route: 'math/word-problems',
                 ready: true,
               },
+              {
+                id: 'math-patterns',
+                label: 'Patterns',
+                route: 'math/patterns',
+                ready: true,
+              },
             ],
           },
           {
@@ -511,8 +517,29 @@
             type: 'group',
             open: false,
             children: [
+              { id: 'ela-riddles', label: 'Riddles', route: 'ela/riddles', ready: true },
+              {
+                id: 'ela-fill-blank',
+                label: 'Fill in the blank',
+                route: 'ela/fill-blank',
+                ready: true,
+              },
               { id: 'ela-reading', label: 'Reading', route: 'ela/reading', ready: false },
               { id: 'ela-writing', label: 'Writing', route: 'ela/writing', ready: false },
+            ],
+          },
+          {
+            id: 'science',
+            label: 'Science',
+            type: 'group',
+            open: false,
+            children: [
+              {
+                id: 'sci-quiz',
+                label: 'Science quiz',
+                route: 'science/quiz',
+                ready: true,
+              },
             ],
           },
           {
@@ -558,7 +585,7 @@
           route: 'home',
           meta: null,
           problem: null,
-          openGroups: { math: true, ela: false, geometry: false, geography: false },
+          openGroups: { math: true, ela: false, science: false, geometry: false, geography: false },
           sidebarOpen: true,
           theme: 'system',
           token: null,
@@ -957,6 +984,7 @@
             cardLink('Math', 'Order of operations', 'math/order-of-operations', 'PEMDAS expressions.', true) +
             cardLink('Math', 'Input/output', 'math/input-output', 'Tables: fill blanks or find the rule.', true) +
             cardLink('Math', 'Word problems', 'math/word-problems', 'Story problems by type.', true) +
+            cardLink('Math', 'Patterns', 'math/patterns', 'Number, shape, and color sequences.', true) +
             cardLink(
               'Geography',
               'Capitals & continents',
@@ -964,6 +992,15 @@
               'US, world, India capitals; continents.',
               true,
             ) +
+            cardLink('ELA', 'Riddles', 'ela/riddles', 'Guess the answer from a clue.', true) +
+            cardLink(
+              'ELA',
+              'Fill in the blank',
+              'ela/fill-blank',
+              'Complete the sentence.',
+              true,
+            ) +
+            cardLink('Science', 'Science quiz', 'science/quiz', 'Topic quizzes from Modal.', true) +
             cardLink('ELA', 'Reading', 'ela/reading', 'Passages coming soon.', false) +
             '</div></section></div>'
           );
@@ -995,6 +1032,8 @@
           var typeLabel = options.typeLabel || 'Problem type';
           var answerLabel = options.answerLabel || 'Your answer';
           var answerPlaceholder = options.answerPlaceholder || 'Type your answer';
+          var revealOnly = !!options.revealOnly;
+          var showReveal = revealOnly || !!options.showReveal;
           return (
             '<div class="animate-fade-up mx-auto max-w-3xl space-y-4">' +
             '<section class="rounded-lg border border-border bg-card/70 shadow-sm">' +
@@ -1036,16 +1075,27 @@
             '<div class="space-y-5 px-5 py-6">' +
             '<div id="prompt" class="font-display text-2xl font-semibold leading-snug sm:text-3xl"><div class="skeleton h-8 w-4/5 rounded-md"></div><div class="skeleton mt-3 h-8 w-3/5 rounded-md"></div></div>' +
             '<p id="hint" class="hidden text-sm text-muted-foreground"></p>' +
-            '<div class="space-y-2"><label id="answer-label" for="answer" class="text-sm font-medium">' +
-            answerLabel +
-            '</label>' +
-            '<input id="answer" type="text" inputmode="' +
-            (options.inputMode || 'decimal') +
-            '" autocomplete="off" placeholder="' +
-            answerPlaceholder +
-            '" class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"/></div>' +
-            '<div id="action-row" class="flex justify-center">' +
-            '<button id="check" type="button" class="inline-flex h-11 min-w-[10rem] items-center justify-center rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow hover:opacity-90 disabled:opacity-50">Check answer</button>' +
+            (revealOnly
+              ? ''
+              : '<div class="space-y-2"><label id="answer-label" for="answer" class="text-sm font-medium">' +
+                answerLabel +
+                '</label>' +
+                '<input id="answer" type="text" inputmode="' +
+                (options.inputMode || 'decimal') +
+                '" autocomplete="off" placeholder="' +
+                answerPlaceholder +
+                '" class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"/></div>') +
+            '<div id="action-row" class="flex flex-wrap justify-center gap-3">' +
+            (revealOnly
+              ? ''
+              : '<button id="check" type="button" class="inline-flex h-11 min-w-[10rem] items-center justify-center rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow hover:opacity-90 disabled:opacity-50">Check answer</button>') +
+            (showReveal
+              ? '<button id="reveal" type="button" class="inline-flex h-11 min-w-[10rem] items-center justify-center rounded-md ' +
+                (revealOnly
+                  ? 'bg-primary text-primary-foreground shadow hover:opacity-90'
+                  : 'border border-input bg-background shadow-sm transition hover:bg-muted') +
+                ' px-6 text-sm font-semibold disabled:opacity-50">Reveal answer</button>'
+              : '') +
             '<button id="next" type="button" class="hidden inline-flex h-11 min-w-[10rem] items-center justify-center rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow hover:opacity-90 disabled:opacity-50">Next problem</button>' +
             '</div>' +
             '<div id="feedback" class="hidden rounded-md border px-4 py-3 text-sm font-medium" role="status" aria-live="polite"></div>' +
@@ -1278,6 +1328,20 @@
               inputMode: 'text',
             };
           }
+          if (mode === 'pattern') {
+            return {
+              label: 'Next item',
+              placeholder: 'What comes next?',
+              inputMode: 'text',
+            };
+          }
+          if (mode === 'riddle' || mode === 'fill_blank' || mode === 'science_quiz') {
+            return {
+              label: 'Your answer',
+              placeholder: 'Type your answer',
+              inputMode: 'text',
+            };
+          }
           return null;
         }
 
@@ -1318,6 +1382,7 @@
           var answerEl = document.getElementById('answer');
           var answerLabelEl = document.getElementById('answer-label');
           var checkBtn = document.getElementById('check');
+          var revealBtn = document.getElementById('reveal');
           var nextBtn = document.getElementById('next');
           var feedbackEl = document.getElementById('feedback');
           var statusEl = document.getElementById('status');
@@ -1336,7 +1401,7 @@
 
           function applyAnswerHints(type) {
             var hints = answerHints(mode, type);
-            if (!hints) return;
+            if (!hints || !answerEl) return;
             if (answerLabelEl) answerLabelEl.textContent = hints.label;
             answerEl.placeholder = hints.placeholder;
             answerEl.setAttribute('inputmode', hints.inputMode);
@@ -1439,8 +1504,9 @@
               });
             });
             if (!answered) {
-              answerEl.disabled = busy;
-              checkBtn.disabled = busy;
+              if (answerEl) answerEl.disabled = busy;
+              if (checkBtn) checkBtn.disabled = busy;
+              if (revealBtn) revealBtn.disabled = busy;
             }
             if (answered) {
               nextBtn.disabled = busy;
@@ -1449,21 +1515,34 @@
 
           function showCheckMode() {
             answered = false;
-            checkBtn.classList.remove('hidden');
+            if (checkBtn) {
+              checkBtn.classList.remove('hidden');
+              checkBtn.disabled = false;
+            }
+            if (revealBtn) {
+              revealBtn.classList.remove('hidden');
+              revealBtn.disabled = false;
+            }
             nextBtn.classList.add('hidden');
-            checkBtn.disabled = false;
-            answerEl.disabled = false;
-            answerEl.readOnly = false;
+            if (answerEl) {
+              answerEl.disabled = false;
+              answerEl.readOnly = false;
+            }
           }
 
           function showNextMode() {
             answered = true;
-            checkBtn.classList.add('hidden');
+            if (checkBtn) {
+              checkBtn.classList.add('hidden');
+              checkBtn.disabled = true;
+            }
+            if (revealBtn) revealBtn.classList.add('hidden');
             nextBtn.classList.remove('hidden');
-            checkBtn.disabled = true;
             nextBtn.disabled = false;
-            answerEl.disabled = true;
-            answerEl.readOnly = true;
+            if (answerEl) {
+              answerEl.disabled = true;
+              answerEl.readOnly = true;
+            }
           }
 
           function clearFeedback() {
@@ -1485,7 +1564,7 @@
                 'font-display whitespace-pre-line text-2xl font-semibold leading-snug sm:text-3xl';
               promptEl.textContent = problem.prompt;
             }
-            answerEl.value = '';
+            if (answerEl) answerEl.value = '';
             clearFeedback();
             metaLine.textContent =
               'Grade ' +
@@ -1501,7 +1580,8 @@
               hintEl.classList.add('hidden');
             }
             applyAnswerHints(problem.type || selectedType);
-            answerEl.focus();
+            if (answerEl) answerEl.focus();
+            else if (revealBtn) revealBtn.focus();
           }
 
           function loadProblem() {
@@ -1509,7 +1589,8 @@
             statusEl.textContent = 'Loading problem…';
             clearFeedback();
             showCheckMode();
-            checkBtn.disabled = true;
+            if (checkBtn) checkBtn.disabled = true;
+            if (revealBtn) revealBtn.disabled = true;
             promptEl.className = 'font-display text-2xl font-semibold leading-snug sm:text-3xl';
             promptEl.innerHTML =
               '<div class="skeleton h-8 w-4/5 rounded-md"></div><div class="skeleton mt-3 h-8 w-3/5 rounded-md"></div>';
@@ -1578,6 +1659,34 @@
               );
           }
 
+          function revealAnswer() {
+            if (!state.problem || answered || !revealBtn) return;
+            setBusy(true);
+            statusEl.textContent = 'Revealing…';
+            google.script.run
+              .withSuccessHandler(function (result) {
+                statusEl.textContent = '';
+                feedbackEl.classList.remove('hidden');
+                feedbackEl.className =
+                  'rounded-md border border-border bg-muted/50 px-4 py-3 text-sm font-medium text-foreground';
+                feedbackEl.textContent = 'Answer: ' + result.correctAnswer;
+                showNextMode();
+                nextBtn.focus();
+              })
+              .withFailureHandler(function (error) {
+                setBusy(false);
+                if (handleAuthFailure(error)) return;
+                statusEl.textContent = error && error.message ? error.message : String(error);
+              })
+              .revealAnswer(
+                withToken({
+                  mode: state.problem.mode,
+                  id: state.problem.id,
+                  answerKind: state.problem.answerKind || null,
+                }),
+              );
+          }
+
           function boot(meta) {
             state.meta = meta;
             selectedGrade = Number((meta.grades && meta.grades[0]) || 3);
@@ -1595,6 +1704,8 @@
             if (mode === 'fractions') typeOptions = meta.fractionTypes || [];
             if (mode === 'input_output') typeOptions = meta.inputOutputTypes || [];
             if (mode === 'geography') typeOptions = meta.geographyTypes || [];
+            if (mode === 'pattern') typeOptions = meta.patternTypes || [];
+            if (mode === 'science_quiz') typeOptions = meta.scienceQuizTypes || [];
             selectedType = typePills && typeOptions.length ? typeOptions[0].id : null;
             applyAnswerHints(selectedType);
             refreshPills();
@@ -1605,14 +1716,17 @@
                 applyOptionsOpen();
               });
             }
-            checkBtn.addEventListener('click', checkAnswer);
+            if (checkBtn) checkBtn.addEventListener('click', checkAnswer);
+            if (revealBtn) revealBtn.addEventListener('click', revealAnswer);
             nextBtn.addEventListener('click', loadProblem);
-            answerEl.addEventListener('keydown', function (e) {
-              if (e.key === 'Enter') {
-                if (answered) loadProblem();
-                else checkAnswer();
-              }
-            });
+            if (answerEl) {
+              answerEl.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                  if (answered) loadProblem();
+                  else checkAnswer();
+                }
+              });
+            }
             loadProblem();
           }
 
@@ -1924,6 +2038,54 @@
               inputMode: 'text',
             });
             wirePractice('geography');
+            return;
+          }
+
+          if (state.route === 'math/patterns') {
+            els.app.innerHTML = practiceShell({
+              showType: true,
+              typeLabel: 'Pattern type',
+              badge: 'Patterns',
+              answerLabel: 'Next item',
+              answerPlaceholder: 'What comes next?',
+              inputMode: 'text',
+            });
+            wirePractice('pattern');
+            return;
+          }
+
+          if (state.route === 'ela/riddles') {
+            els.app.innerHTML = practiceShell({
+              showType: false,
+              revealOnly: true,
+              badge: 'Riddles',
+            });
+            wirePractice('riddle');
+            return;
+          }
+
+          if (state.route === 'ela/fill-blank') {
+            els.app.innerHTML = practiceShell({
+              showType: false,
+              badge: 'Fill in the blank',
+              answerLabel: 'Your answer',
+              answerPlaceholder: 'Type your answer',
+              inputMode: 'text',
+            });
+            wirePractice('fill_blank');
+            return;
+          }
+
+          if (state.route === 'science/quiz') {
+            els.app.innerHTML = practiceShell({
+              showType: true,
+              typeLabel: 'Topic',
+              badge: 'Science quiz',
+              answerLabel: 'Your answer',
+              answerPlaceholder: 'Type your answer',
+              inputMode: 'text',
+            });
+            wirePractice('science_quiz');
             return;
           }
 

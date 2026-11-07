@@ -23,6 +23,12 @@ import {
   generateOrderOfOperations,
 } from './phase4.js';
 import { generateGeography } from './geography.js';
+import {
+  generateFillBlank,
+  generatePattern,
+  generateRiddle,
+  generateScienceQuiz,
+} from './modal-activities.js';
 import { generatePlaceValue } from './place-value.js';
 import { generateSubtraction } from './subtraction.js';
 import { getWordProblems } from './sheets.js';
@@ -237,6 +243,18 @@ export const createInputOutputProblem = ({ grade, type, difficulty } = {}) =>
 
 export const createGeographyProblem = ({ grade, type, difficulty } = {}) =>
   createTextProblem({ mode: 'geography', grade, type, difficulty, generate: generateGeography });
+
+export const createPatternProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'pattern', grade, type, difficulty, generate: generatePattern });
+
+export const createRiddleProblem = ({ grade, difficulty } = {}) =>
+  createTextProblem({ mode: 'riddle', grade, difficulty, generate: generateRiddle });
+
+export const createFillBlankProblem = ({ grade, difficulty } = {}) =>
+  createTextProblem({ mode: 'fill_blank', grade, difficulty, generate: generateFillBlank });
+
+export const createScienceQuizProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'science_quiz', grade, type, difficulty, generate: generateScienceQuiz });
 
 export { formatCents };
 

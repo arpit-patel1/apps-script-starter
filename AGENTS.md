@@ -8,7 +8,8 @@ This repo is the **Kids Homework Playground**: a Google Apps Script web app for 
 - **Shell:** Dark teal side nav + light paper main canvas. Default route is **Homepage**.
 - **Live Math activities:** Addition, Subtraction, Multiplication, Division, Place value, Rounding, Factors & multiples, Missing symbol, Estimate, Times as many, Money (count/change/compare), Measurement, Time, Fractions, Order of operations, Input/output (generated), Word problems (Sheet-backed).
 - **Live Geography:** Capitals & continents (US capitals/abbreviations, world capitals, India capitals, continents) — static generated quizzes.
-- **Planned subjects in nav:** ELA, Geometry (sub-items show Coming soon).
+- **Live Modal activities (auth + Script Properties):** Patterns, Riddles, Fill in the blank, Science quiz.
+- **Planned subjects in nav:** Geometry; remaining ELA (Reading/Writing show Coming soon).
 - **Homepage:** Featured + supporting quotes from the `Quotes` sheet, illustrative visuals, quick activity jumps.
 - **Upstream catalog:** Many activity ideas come from `network-element-ai` (`app/protected/math-homework/`, `lib/math/`).
 
@@ -49,6 +50,7 @@ Manual full reseed: run `seedDatabase` from the Apps Script editor, or use the S
 | `src/server/sheets.js` | Spreadsheet reads |
 | `src/server/problems.js` / `grading.js` | Problem generation + answer checking |
 | `src/server/geography.js` / `geography-data.js` | Geography quiz generation + static lists |
+| `src/server/modal.js` / `modal-activities.js` | Modal UrlFetch client + pattern/riddle/fill-blank/science |
 | `src/server/seed.js` / `seed-data.js` | Schema seed content |
 | `src/server/webapp.js` | `doGet` HtmlService entry |
 | `src/index.js` | Exports for clasp / Vite GAS bridge |
@@ -70,6 +72,7 @@ Product and design specs live in [`specs/`](specs/). Implement against those spe
 | Ops phase 4 | [`specs/operations-phase4.md`](specs/operations-phase4.md) |
 | Geography | [`specs/geography.md`](specs/geography.md) |
 | Auth | [`specs/auth.md`](specs/auth.md) |
+| Modal activities | [`specs/modal-activities.md`](specs/modal-activities.md) |
 
 ## UI theme (required)
 
@@ -103,6 +106,8 @@ npx clasp deploy -i AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ
 Requires Apps Script API enabled for the Google account: https://script.google.com/home/usersettings
 
 Web app runs as `USER_DEPLOYING` with `ANYONE_ANONYMOUS` access (`appsscript.json`). App-level username + password login gates practice APIs (see [`specs/auth.md`](specs/auth.md)); Google Sites embed continues to work.
+
+Modal drills need Script properties `MODAL_BASE_URL` and `MODAL_API_KEY` (see [`specs/modal-activities.md`](specs/modal-activities.md)). Scope `script.external_request` is required for `UrlFetchApp`.
 
 ## Conventions for new activities
 

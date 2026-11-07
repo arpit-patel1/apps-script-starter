@@ -6,6 +6,7 @@ import {
   getSession,
   login,
   logout,
+  revealAnswer,
 } from './server/api.js';
 import { onOpen } from './server/menu.js';
 import { seedDatabase } from './server/seed.js';
@@ -21,5 +22,6 @@ export {
   login,
   logout,
   onOpen,
+  revealAnswer,
   seedDatabase,
 };

@@ -94,4 +94,6 @@ export {
 
 export { GEOGRAPHY_TYPES } from './geography.js';
 
+export { PATTERN_TYPES } from './modal-activities.js';
+
 export const PROBLEM_CACHE_SECONDS = 30 * 60;

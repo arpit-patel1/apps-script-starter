@@ -9,6 +9,7 @@ import {
   MEASUREMENT_TYPES,
   MONEY_COUNT_TYPES,
   MULTIPLICATION_TYPES,
+  PATTERN_TYPES,
   PLACE_VALUE_TYPES,
   ROUNDING_TYPES,
   TIME_TYPES,
@@ -23,6 +24,7 @@ import {
   createDivisionProblem,
   createEstimateProblem,
   createFactorsProblem,
+  createFillBlankProblem,
   createFractionsProblem,
   createGeographyProblem,
   createInputOutputProblem,
@@ -33,8 +35,11 @@ import {
   createMoneyCountProblem,
   createMultiplicationProblem,
   createOrderOfOperationsProblem,
+  createPatternProblem,
   createPlaceValueProblem,
+  createRiddleProblem,
   createRoundingProblem,
+  createScienceQuizProblem,
   createSubtractionProblem,
   createTimeProblem,
   createTimesAsManyProblem,
@@ -45,6 +50,7 @@ import {
   recallAnswerExtra,
   recallAnswerKind,
 } from './problems.js';
+import { getScienceQuizKeys } from './modal.js';
 import { ensureDatabase } from './seed.js';
 import { getConfigMap, getQuotes } from './sheets.js';
 
@@ -86,6 +92,10 @@ export const getMeta = (options = {}) => {
       { id: 'input_output', label: 'Input/output' },
       { id: 'word', label: 'Word problem' },
       { id: 'geography', label: 'Geography' },
+      { id: 'pattern', label: 'Patterns' },
+      { id: 'riddle', label: 'Riddles' },
+      { id: 'fill_blank', label: 'Fill in the blank' },
+      { id: 'science_quiz', label: 'Science quiz' },
     ],
     types: WORD_PROBLEM_TYPES,
     multiplicationTypes: MULTIPLICATION_TYPES,
@@ -100,6 +110,11 @@ export const getMeta = (options = {}) => {
     fractionTypes: FRACTION_TYPES,
     inputOutputTypes: INPUT_OUTPUT_TYPES,
     geographyTypes: GEOGRAPHY_TYPES,
+    patternTypes: PATTERN_TYPES,
+    scienceQuizTypes: getScienceQuizKeys().map((key) => ({
+      id: key,
+      label: key.replace(/[-_]/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase()),
+    })),
   };
 };
 
@@ -191,6 +206,18 @@ export const getNextProblem = (options = {}) => {
   if (mode === 'geography') {
     return createGeographyProblem({ grade, type, difficulty, excludeId });
   }
+  if (mode === 'pattern') {
+    return createPatternProblem({ grade, type, difficulty, excludeId });
+  }
+  if (mode === 'riddle') {
+    return createRiddleProblem({ grade, difficulty, excludeId });
+  }
+  if (mode === 'fill_blank') {
+    return createFillBlankProblem({ grade, difficulty, excludeId });
+  }
+  if (mode === 'science_quiz') {
+    return createScienceQuizProblem({ grade, type, difficulty, excludeId });
+  }
 
   throw new Error(`Unsupported mode: ${mode}`);
 };
@@ -240,4 +267,41 @@ export const checkAnswer = (options = {}) => {
     correct,
     correctAnswer: correct ? undefined : reveal,
   };
+};
+
+/** Reveal the stored answer without grading (e.g. riddles). */
+export const revealAnswer = (options = {}) => {
+  requireUser(options.token);
+  const mode = String(options.mode || '');
+  const id = String(options.id || '');
+
+  if (!id) {
+    throw new Error('Missing problem id.');
+  }
+
+  let correctAnswer = recallAnswer(id);
+  if (correctAnswer === null || correctAnswer === undefined || correctAnswer === '') {
+    if (mode === 'word') {
+      correctAnswer = lookupWordProblemAnswer(id);
+    }
+  }
+
+  if (correctAnswer === null || correctAnswer === undefined || correctAnswer === '') {
+    throw new Error('Problem expired. Tap Next for a new one.');
+  }
+
+  const answerKind = recallAnswerKind(id) || options.answerKind || null;
+  const extra = recallAnswerExtra(id) || {};
+  let reveal = String(correctAnswer);
+  if (answerKind === 'range' && extra.range) {
+    reveal = `any number from ${extra.range.min} to ${extra.range.max}`;
+  } else if (answerKind === 'accepted_list' && Array.isArray(extra.accepted)) {
+    reveal = extra.accepted.join(' or ');
+  } else if (answerKind === 'geo_list' && Array.isArray(extra.accepted)) {
+    reveal = extra.accepted.slice(0, 6).join(', ') + (extra.accepted.length > 6 ? ', …' : '');
+  } else if (answerKind === 'money' && Number.isFinite(Number(correctAnswer))) {
+    reveal = formatCents(Number(correctAnswer));
+  }
+
+  return { correctAnswer: reveal };
 };
