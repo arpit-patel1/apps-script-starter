@@ -1,5 +1,14 @@
-import { getGmailAliases } from './server/gmail.js';
-import { createQueryString, makeQueryString } from './server/http.js';
+import { checkAnswer, getHomeContent, getMeta, getNextProblem } from './server/api.js';
+import { onOpen } from './server/menu.js';
+import { seedDatabase } from './server/seed.js';
 import { doGet } from './server/webapp.js';
 
-export { createQueryString, doGet, getGmailAliases, makeQueryString };
+export {
+  checkAnswer,
+  doGet,
+  getHomeContent,
+  getMeta,
+  getNextProblem,
+  onOpen,
+  seedDatabase,
+};
