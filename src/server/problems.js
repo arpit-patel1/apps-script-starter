@@ -9,6 +9,19 @@ import {
   generateRounding,
   generateTimesAsMany,
 } from './phase2.js';
+import {
+  formatCents,
+  generateMeasurement,
+  generateMoneyChange,
+  generateMoneyCompare,
+  generateMoneyCount,
+  generateTime,
+} from './phase3.js';
+import {
+  generateFractions,
+  generateInputOutput,
+  generateOrderOfOperations,
+} from './phase4.js';
 import { generatePlaceValue } from './place-value.js';
 import { generateSubtraction } from './subtraction.js';
 import { getWordProblems } from './sheets.js';
@@ -45,8 +58,8 @@ export const recallAnswerExtra = (id) => {
 
 const pickRandom = (items) => items[Math.floor(Math.random() * items.length)];
 
-export const createMultiplicationProblem = ({ grade, type } = {}) => {
-  const factors = generateAlgorithmFactors({ grade: Number(grade), type });
+export const createMultiplicationProblem = ({ grade, type, difficulty } = {}) => {
+  const factors = generateAlgorithmFactors({ grade: Number(grade), type, difficulty });
   const { multiplicand, multiplier, product, type: kind } = factors;
   const id = `mult-${grade}-${kind}-${multiplicand}x${multiplier}-${Date.now()}`;
   rememberAnswer(id, product);
@@ -56,6 +69,7 @@ export const createMultiplicationProblem = ({ grade, type } = {}) => {
     mode: 'multiplication',
     grade: Number(grade),
     type: kind,
+    difficulty: difficulty || 'medium',
     display: 'standard_algorithm',
     prompt: 'Multiply using the standard algorithm.',
     layout: {
@@ -67,8 +81,8 @@ export const createMultiplicationProblem = ({ grade, type } = {}) => {
   };
 };
 
-export const createAdditionProblem = ({ grade } = {}) => {
-  const { a, b, sum } = generateAddition({ grade: Number(grade) });
+export const createAdditionProblem = ({ grade, difficulty } = {}) => {
+  const { a, b, sum } = generateAddition({ grade: Number(grade), difficulty });
   const id = `add-${grade}-${a}+${b}-${Date.now()}`;
   rememberAnswer(id, sum);
 
@@ -76,6 +90,7 @@ export const createAdditionProblem = ({ grade } = {}) => {
     id,
     mode: 'addition',
     grade: Number(grade),
+    difficulty: difficulty || 'medium',
     display: 'standard_algorithm',
     prompt: 'Add using the standard algorithm.',
     layout: { top: a, bottom: b, operator: '+' },
@@ -83,8 +98,8 @@ export const createAdditionProblem = ({ grade } = {}) => {
   };
 };
 
-export const createSubtractionProblem = ({ grade } = {}) => {
-  const { a, b, difference } = generateSubtraction({ grade: Number(grade) });
+export const createSubtractionProblem = ({ grade, difficulty } = {}) => {
+  const { a, b, difference } = generateSubtraction({ grade: Number(grade), difficulty });
   const id = `sub-${grade}-${a}-${b}-${Date.now()}`;
   rememberAnswer(id, difference);
 
@@ -92,6 +107,7 @@ export const createSubtractionProblem = ({ grade } = {}) => {
     id,
     mode: 'subtraction',
     grade: Number(grade),
+    difficulty: difficulty || 'medium',
     display: 'standard_algorithm',
     prompt: 'Subtract using the standard algorithm.',
     layout: { top: a, bottom: b, operator: '−' },
@@ -99,8 +115,8 @@ export const createSubtractionProblem = ({ grade } = {}) => {
   };
 };
 
-export const createDivisionProblem = ({ grade, type } = {}) => {
-  const q = generateDivision({ grade: Number(grade), type });
+export const createDivisionProblem = ({ grade, type, difficulty } = {}) => {
+  const q = generateDivision({ grade: Number(grade), type, difficulty });
   const id = `div-${grade}-${q.type}-${q.dividend}d${q.divisor}-${Date.now()}`;
   rememberAnswer(id, q.answer);
 
@@ -111,6 +127,7 @@ export const createDivisionProblem = ({ grade, type } = {}) => {
     mode: 'division',
     grade: Number(grade),
     type: q.type,
+    difficulty: difficulty || 'medium',
     display,
     prompt:
       q.type === 'facts'
@@ -131,8 +148,8 @@ export const createDivisionProblem = ({ grade, type } = {}) => {
   };
 };
 
-export const createPlaceValueProblem = ({ grade, type } = {}) => {
-  const q = generatePlaceValue({ grade: Number(grade), type });
+export const createPlaceValueProblem = ({ grade, type, difficulty } = {}) => {
+  const q = generatePlaceValue({ grade: Number(grade), type, difficulty });
   const id = `pv-${grade}-${q.type}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   rememberAnswer(id, q.answer);
   rememberKind(id, q.answerKind);
@@ -142,6 +159,7 @@ export const createPlaceValueProblem = ({ grade, type } = {}) => {
     mode: 'place_value',
     grade: Number(grade),
     type: q.type,
+    difficulty: difficulty || 'medium',
     display: 'text',
     prompt: q.prompt,
     hint: q.hint || null,
@@ -149,8 +167,8 @@ export const createPlaceValueProblem = ({ grade, type } = {}) => {
   };
 };
 
-const createTextProblem = ({ mode, grade, type, generate }) => {
-  const q = generate({ grade: Number(grade), type });
+const createTextProblem = ({ mode, grade, type, difficulty, generate }) => {
+  const q = generate({ grade: Number(grade), type, difficulty });
   const id = `${mode}-${grade}-${q.type}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   rememberAnswer(id, q.answer);
   rememberKind(id, q.answerKind || (mode === 'missing_symbol' ? 'symbol' : null));
@@ -164,6 +182,7 @@ const createTextProblem = ({ mode, grade, type, generate }) => {
     mode,
     grade: Number(grade),
     type: q.type,
+    difficulty: difficulty || 'medium',
     display: 'text',
     prompt: q.prompt,
     hint: q.hint || null,
@@ -171,20 +190,51 @@ const createTextProblem = ({ mode, grade, type, generate }) => {
   };
 };
 
-export const createRoundingProblem = ({ grade, type } = {}) =>
-  createTextProblem({ mode: 'rounding', grade, type, generate: generateRounding });
+export const createRoundingProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'rounding', grade, type, difficulty, generate: generateRounding });
 
-export const createFactorsProblem = ({ grade, type } = {}) =>
-  createTextProblem({ mode: 'factors', grade, type, generate: generateFactors });
+export const createFactorsProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'factors', grade, type, difficulty, generate: generateFactors });
 
-export const createMissingSymbolProblem = ({ grade } = {}) =>
-  createTextProblem({ mode: 'missing_symbol', grade, generate: generateMissingSymbol });
+export const createMissingSymbolProblem = ({ grade, difficulty } = {}) =>
+  createTextProblem({ mode: 'missing_symbol', grade, difficulty, generate: generateMissingSymbol });
 
-export const createEstimateProblem = ({ grade } = {}) =>
-  createTextProblem({ mode: 'estimate', grade, generate: generateEstimate });
+export const createEstimateProblem = ({ grade, difficulty } = {}) =>
+  createTextProblem({ mode: 'estimate', grade, difficulty, generate: generateEstimate });
 
-export const createTimesAsManyProblem = ({ grade, type } = {}) =>
-  createTextProblem({ mode: 'times_as_many', grade, type, generate: generateTimesAsMany });
+export const createTimesAsManyProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'times_as_many', grade, type, difficulty, generate: generateTimesAsMany });
+
+export const createMoneyCountProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'money_count', grade, type, difficulty, generate: generateMoneyCount });
+
+export const createMoneyChangeProblem = ({ grade, difficulty } = {}) =>
+  createTextProblem({ mode: 'money_change', grade, difficulty, generate: generateMoneyChange });
+
+export const createMoneyCompareProblem = ({ grade, difficulty } = {}) =>
+  createTextProblem({ mode: 'money_compare', grade, difficulty, generate: generateMoneyCompare });
+
+export const createMeasurementProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'measurement', grade, type, difficulty, generate: generateMeasurement });
+
+export const createTimeProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'time', grade, type, difficulty, generate: generateTime });
+
+export const createFractionsProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'fractions', grade, type, difficulty, generate: generateFractions });
+
+export const createOrderOfOperationsProblem = ({ grade, difficulty } = {}) =>
+  createTextProblem({
+    mode: 'order_of_operations',
+    grade,
+    difficulty,
+    generate: generateOrderOfOperations,
+  });
+
+export const createInputOutputProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'input_output', grade, type, difficulty, generate: generateInputOutput });
+
+export { formatCents };
 
 export const createWordProblem = ({ grade, type, excludeId } = {}) => {
   let candidates = getWordProblems().filter((problem) => problem.grade === Number(grade));

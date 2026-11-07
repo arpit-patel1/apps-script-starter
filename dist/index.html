@@ -328,6 +328,54 @@
                 ready: true,
               },
               {
+                id: 'math-money-count',
+                label: 'Money — coins & bills',
+                route: 'math/money-count',
+                ready: true,
+              },
+              {
+                id: 'math-money-change',
+                label: 'Money — change',
+                route: 'math/money-change',
+                ready: true,
+              },
+              {
+                id: 'math-money-compare',
+                label: 'Money — compare',
+                route: 'math/money-compare',
+                ready: true,
+              },
+              {
+                id: 'math-measurement',
+                label: 'Measurement',
+                route: 'math/measurement',
+                ready: true,
+              },
+              {
+                id: 'math-time',
+                label: 'Time',
+                route: 'math/time',
+                ready: true,
+              },
+              {
+                id: 'math-fractions',
+                label: 'Fractions',
+                route: 'math/fractions',
+                ready: true,
+              },
+              {
+                id: 'math-order-of-operations',
+                label: 'Order of operations',
+                route: 'math/order-of-operations',
+                ready: true,
+              },
+              {
+                id: 'math-input-output',
+                label: 'Input/output',
+                route: 'math/input-output',
+                ready: true,
+              },
+              {
                 id: 'math-word-problems',
                 label: 'Word problems',
                 route: 'math/word-problems',
@@ -649,6 +697,14 @@
             cardLink('Math', 'Missing symbol', 'math/missing-symbol', 'Fill + − × ÷ = < >.', true) +
             cardLink('Math', 'Estimate', 'math/estimate', 'Round, then compute.', true) +
             cardLink('Math', 'Times as many', 'math/times-as-many', 'Multiplicative comparison.', true) +
+            cardLink('Math', 'Money — coins & bills', 'math/money-count', 'Count piles or make an amount.', true) +
+            cardLink('Math', 'Money — change', 'math/money-change', 'Pay and get change.', true) +
+            cardLink('Math', 'Money — compare', 'math/money-compare', 'Which side is more?', true) +
+            cardLink('Math', 'Measurement', 'math/measurement', 'Length, volume, weight conversions.', true) +
+            cardLink('Math', 'Time', 'math/time', 'Read clocks, elapsed time, convert.', true) +
+            cardLink('Math', 'Fractions', 'math/fractions', 'Add, subtract, multiply, compare.', true) +
+            cardLink('Math', 'Order of operations', 'math/order-of-operations', 'PEMDAS expressions.', true) +
+            cardLink('Math', 'Input/output', 'math/input-output', 'Tables: fill blanks or find the rule.', true) +
             cardLink('Math', 'Word problems', 'math/word-problems', 'Story problems by type.', true) +
             cardLink('ELA', 'Reading', 'ela/reading', 'Passages coming soon.', false) +
             '</div></section></div>'
@@ -683,21 +739,35 @@
           var answerPlaceholder = options.answerPlaceholder || 'Type your answer';
           return (
             '<div class="animate-fade-up mx-auto max-w-3xl space-y-4">' +
-            '<section class="grid gap-3 ' +
-            (options.showType ? 'sm:grid-cols-2' : '') +
-            '">' +
+            '<section class="rounded-lg border border-border bg-card/70 shadow-sm">' +
+            '<button id="options-toggle" type="button" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-muted/40" aria-expanded="true" aria-controls="options-panel">' +
+            '<div class="min-w-0">' +
+            '<p class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Options</p>' +
+            '<p id="options-summary" class="mt-0.5 truncate text-sm font-medium text-foreground">Grade 3 · Medium</p>' +
+            '</div>' +
+            '<span id="options-chevron" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground" aria-hidden="true">' +
+            '<svg class="h-4 w-4 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>' +
+            '</span></button>' +
+            '<div id="options-panel" class="space-y-3 border-t border-border px-4 pb-4 pt-3">' +
+            '<div class="grid gap-3 sm:grid-cols-2">' +
             '<div class="space-y-2">' +
-            '<label for="grade" class="text-sm font-medium">Grade</label>' +
-            '<div class="relative">' +
-            '<select id="grade" class="flex h-11 w-full appearance-none rounded-md border border-input bg-card px-3 py-2 pr-10 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"></select>' +
-            '<svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>' +
+            '<p class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Grade</p>' +
+            '<div id="grade-pills" class="flex flex-wrap gap-2" role="group" aria-label="Grade"></div>' +
+            '</div>' +
+            '<div class="space-y-2">' +
+            '<p class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Difficulty</p>' +
+            '<div id="difficulty-pills" class="flex flex-wrap gap-2" role="group" aria-label="Difficulty"></div>' +
             '</div></div>' +
             (options.showType
-              ? '<div class="space-y-2"><label for="type" class="text-sm font-medium">' +
+              ? '<div class="space-y-2">' +
+                '<p class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">' +
                 typeLabel +
-                '</label><div class="relative"><select id="type" class="flex h-11 w-full appearance-none rounded-md border border-input bg-card px-3 py-2 pr-10 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"></select><svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div></div>'
+                '</p>' +
+                '<div id="type-pills" class="flex flex-wrap gap-2" role="group" aria-label="' +
+                typeLabel +
+                '"></div></div>'
               : '') +
-            '</section>' +
+            '</div></section>' +
             '<section class="rounded-lg border border-border bg-card shadow-sm">' +
             '<div class="flex items-center justify-between border-b border-border px-5 py-4">' +
             '<div><p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Your problem</p>' +
@@ -800,6 +870,30 @@
             if (type === 'word') return 'Word problem';
             if (type === 'write_equation') return 'Write equation';
           }
+          if (mode === 'money_count') {
+            if (type === 'count') return 'Count coins & bills';
+            if (type === 'make') return 'Make an amount';
+          }
+          if (mode === 'measurement') {
+            if (type === 'length') return 'Length';
+            if (type === 'volume') return 'Volume';
+            if (type === 'weight') return 'Weight';
+          }
+          if (mode === 'time') {
+            if (type === 'read') return 'Read the clock';
+            if (type === 'elapsed') return 'Elapsed time';
+            if (type === 'convert') return 'Convert units';
+          }
+          if (mode === 'fractions') {
+            if (type === 'add') return 'Add';
+            if (type === 'subtract') return 'Subtract';
+            if (type === 'multiply') return 'Multiply';
+            if (type === 'compare') return 'Compare';
+          }
+          if (mode === 'input_output') {
+            if (type === 'fill') return 'Fill missing';
+            if (type === 'find_rule') return 'Find the rule';
+          }
           return String(type || '').replace(/_/g, ' ');
         }
 
@@ -855,22 +949,105 @@
             }
             return { label: 'Your answer', placeholder: 'Type the number', inputMode: 'numeric' };
           }
+          if (mode === 'money_count') {
+            if (type === 'make') {
+              return {
+                label: 'Number of coins',
+                placeholder: 'Fewest coins total',
+                inputMode: 'numeric',
+              };
+            }
+            return {
+              label: 'Amount',
+              placeholder: 'e.g. $1.35 or 135¢',
+              inputMode: 'decimal',
+            };
+          }
+          if (mode === 'money_change') {
+            return {
+              label: 'Change',
+              placeholder: 'e.g. $0.25 or 25¢',
+              inputMode: 'decimal',
+            };
+          }
+          if (mode === 'money_compare') {
+            return { label: 'Compare', placeholder: '<, >, or =', inputMode: 'text' };
+          }
+          if (mode === 'measurement') {
+            return { label: 'Converted amount', placeholder: 'Type the number', inputMode: 'numeric' };
+          }
+          if (mode === 'time') {
+            if (type === 'convert') {
+              return {
+                label: 'Your answer',
+                placeholder: 'Minutes, or h:mm',
+                inputMode: 'text',
+              };
+            }
+            return { label: 'Time', placeholder: 'e.g. 3:30', inputMode: 'text' };
+          }
+          if (mode === 'fractions') {
+            if (type === 'compare') {
+              return { label: 'Compare', placeholder: '<, >, or =', inputMode: 'text' };
+            }
+            return {
+              label: 'Fraction',
+              placeholder: 'e.g. 3/4 or 1 1/2',
+              inputMode: 'text',
+            };
+          }
+          if (mode === 'order_of_operations') {
+            return { label: 'Value', placeholder: 'Type the result', inputMode: 'numeric' };
+          }
+          if (mode === 'input_output') {
+            if (type === 'find_rule') {
+              return {
+                label: 'Rule',
+                placeholder: 'e.g. + 5 or × 3',
+                inputMode: 'text',
+              };
+            }
+            return {
+              label: 'Missing values',
+              placeholder: 'e.g. 12, 8',
+              inputMode: 'text',
+            };
+          }
           return null;
         }
 
-        function fillSelect(select, items, getValue, getLabel) {
-          select.innerHTML = '';
+        var PILL_BASE =
+          'inline-flex h-9 items-center justify-center rounded-full border px-3.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50';
+        var PILL_IDLE = 'border-border bg-background text-foreground hover:bg-muted';
+        var PILL_ACTIVE = 'border-primary bg-primary text-primary-foreground shadow-sm';
+
+        function renderPills(container, items, selectedValue, onSelect, getValue, getLabel, getTitle) {
+          if (!container) return;
+          container.innerHTML = '';
           items.forEach(function (item) {
-            var option = document.createElement('option');
-            option.value = getValue(item);
-            option.textContent = getLabel(item);
-            select.appendChild(option);
+            var value = getValue(item);
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = PILL_BASE + ' ' + (String(value) === String(selectedValue) ? PILL_ACTIVE : PILL_IDLE);
+            btn.textContent = getLabel(item);
+            if (getTitle) btn.title = getTitle(item);
+            btn.setAttribute('aria-pressed', String(value) === String(selectedValue) ? 'true' : 'false');
+            btn.addEventListener('click', function () {
+              if (String(value) === String(selectedValue)) return;
+              onSelect(value);
+            });
+            container.appendChild(btn);
           });
         }
 
         function wirePractice(mode) {
-          var gradeEl = document.getElementById('grade');
-          var typeEl = document.getElementById('type');
+          var optionsToggle = document.getElementById('options-toggle');
+          var optionsPanel = document.getElementById('options-panel');
+          var optionsSummary = document.getElementById('options-summary');
+          var optionsChevron = document.getElementById('options-chevron');
+          var gradePills = document.getElementById('grade-pills');
+          var difficultyPills = document.getElementById('difficulty-pills');
+          var typePills = document.getElementById('type-pills');
           var promptEl = document.getElementById('prompt');
           var hintEl = document.getElementById('hint');
           var answerEl = document.getElementById('answer');
@@ -881,6 +1058,16 @@
           var statusEl = document.getElementById('status');
           var metaLine = document.getElementById('meta-line');
           var answered = false;
+          var selectedGrade = 3;
+          var selectedDifficulty = 'medium';
+          var selectedType = null;
+          var typeOptions = [];
+          var controlsBusy = false;
+          var optionsOpen = true;
+
+          try {
+            if (localStorage.getItem('kp-options-open') === '0') optionsOpen = false;
+          } catch (ignore) {}
 
           function applyAnswerHints(type) {
             var hints = answerHints(mode, type);
@@ -890,9 +1077,102 @@
             answerEl.setAttribute('inputmode', hints.inputMode);
           }
 
+          function difficultyLabel(id) {
+            if (id === 'easy') return 'Easy';
+            if (id === 'hard') return 'Hard';
+            return 'Medium';
+          }
+
+          function selectedTypeLabel() {
+            if (!selectedType || !typeOptions.length) return '';
+            for (var i = 0; i < typeOptions.length; i += 1) {
+              if (String(typeOptions[i].id) === String(selectedType)) return typeOptions[i].label;
+            }
+            return typeLabel(mode, selectedType);
+          }
+
+          function updateOptionsSummary() {
+            if (!optionsSummary) return;
+            var parts = ['Grade ' + selectedGrade, difficultyLabel(selectedDifficulty)];
+            var typeName = selectedTypeLabel();
+            if (typeName) parts.push(typeName);
+            optionsSummary.textContent = parts.join(' · ');
+          }
+
+          function applyOptionsOpen() {
+            if (!optionsPanel || !optionsToggle) return;
+            if (optionsOpen) {
+              optionsPanel.classList.remove('hidden');
+              optionsToggle.setAttribute('aria-expanded', 'true');
+              if (optionsChevron) optionsChevron.querySelector('svg').style.transform = 'rotate(0deg)';
+            } else {
+              optionsPanel.classList.add('hidden');
+              optionsToggle.setAttribute('aria-expanded', 'false');
+              if (optionsChevron) optionsChevron.querySelector('svg').style.transform = 'rotate(-90deg)';
+            }
+            try {
+              localStorage.setItem('kp-options-open', optionsOpen ? '1' : '0');
+            } catch (ignore) {}
+          }
+
+          function refreshPills() {
+            renderPills(
+              gradePills,
+              (state.meta && state.meta.grades) || [3, 4, 5],
+              selectedGrade,
+              function (value) {
+                selectedGrade = Number(value);
+                refreshPills();
+                loadProblem();
+              },
+              function (g) { return g; },
+              function (g) { return String(g); },
+              function (g) { return 'Grade ' + g; },
+            );
+            renderPills(
+              difficultyPills,
+              (state.meta && state.meta.difficulties) || [
+                { id: 'easy', label: 'E', full: 'Easy' },
+                { id: 'medium', label: 'M', full: 'Medium' },
+                { id: 'hard', label: 'H', full: 'Hard' },
+              ],
+              selectedDifficulty,
+              function (value) {
+                selectedDifficulty = value;
+                refreshPills();
+                loadProblem();
+              },
+              function (d) { return d.id; },
+              function (d) { return d.label; },
+              function (d) { return d.full || d.label; },
+            );
+            if (typePills) {
+              renderPills(
+                typePills,
+                typeOptions,
+                selectedType,
+                function (value) {
+                  selectedType = value;
+                  applyAnswerHints(selectedType);
+                  refreshPills();
+                  loadProblem();
+                },
+                function (t) { return t.id; },
+                function (t) { return t.label; },
+              );
+            }
+            updateOptionsSummary();
+            setBusy(controlsBusy);
+          }
+
           function setBusy(busy) {
-            gradeEl.disabled = busy;
-            if (typeEl) typeEl.disabled = busy;
+            controlsBusy = busy;
+            [gradePills, difficultyPills, typePills].forEach(function (group) {
+              if (!group) return;
+              Array.prototype.forEach.call(group.querySelectorAll('button'), function (btn) {
+                btn.disabled = busy;
+              });
+            });
             if (!answered) {
               answerEl.disabled = busy;
               checkBtn.disabled = busy;
@@ -945,6 +1225,8 @@
             metaLine.textContent =
               'Grade ' +
               problem.grade +
+              ' · ' +
+              difficultyLabel(problem.difficulty || selectedDifficulty) +
               (problem.type ? ' · ' + typeLabel(mode, problem.type) : '');
             if (problem.hint) {
               hintEl.textContent = problem.hint;
@@ -953,7 +1235,7 @@
               hintEl.textContent = '';
               hintEl.classList.add('hidden');
             }
-            applyAnswerHints(problem.type || (typeEl ? typeEl.value : null));
+            applyAnswerHints(problem.type || selectedType);
             answerEl.focus();
           }
 
@@ -980,8 +1262,9 @@
               })
               .getNextProblem({
                 mode: mode,
-                grade: Number(gradeEl.value),
-                type: typeEl ? typeEl.value : null,
+                grade: Number(selectedGrade),
+                difficulty: selectedDifficulty,
+                type: typePills ? selectedType : null,
                 excludeId: state.problem ? state.problem.id : null,
               });
           }
@@ -1026,28 +1309,30 @@
 
           function boot(meta) {
             state.meta = meta;
-            fillSelect(gradeEl, meta.grades, function (g) { return g; }, function (g) { return 'Grade ' + g; });
-            if (typeEl) {
-              var typeOptions = meta.types || [];
-              if (mode === 'multiplication') typeOptions = meta.multiplicationTypes || [];
-              if (mode === 'division') typeOptions = meta.divisionTypes || [];
-              if (mode === 'place_value') typeOptions = meta.placeValueTypes || [];
-              if (mode === 'rounding') typeOptions = meta.roundingTypes || [];
-              if (mode === 'factors') typeOptions = meta.factorsTypes || [];
-              if (mode === 'times_as_many') typeOptions = meta.timesAsManyTypes || [];
-              fillSelect(
-                typeEl,
-                typeOptions,
-                function (t) { return t.id; },
-                function (t) { return t.label; },
-              );
-              applyAnswerHints(typeEl.value);
-              typeEl.addEventListener('change', function () {
-                applyAnswerHints(typeEl.value);
-                loadProblem();
+            selectedGrade = Number((meta.grades && meta.grades[0]) || 3);
+            selectedDifficulty = 'medium';
+            typeOptions = meta.types || [];
+            if (mode === 'multiplication') typeOptions = meta.multiplicationTypes || [];
+            if (mode === 'division') typeOptions = meta.divisionTypes || [];
+            if (mode === 'place_value') typeOptions = meta.placeValueTypes || [];
+            if (mode === 'rounding') typeOptions = meta.roundingTypes || [];
+            if (mode === 'factors') typeOptions = meta.factorsTypes || [];
+            if (mode === 'times_as_many') typeOptions = meta.timesAsManyTypes || [];
+            if (mode === 'money_count') typeOptions = meta.moneyCountTypes || [];
+            if (mode === 'measurement') typeOptions = meta.measurementTypes || [];
+            if (mode === 'time') typeOptions = meta.timeTypes || [];
+            if (mode === 'fractions') typeOptions = meta.fractionTypes || [];
+            if (mode === 'input_output') typeOptions = meta.inputOutputTypes || [];
+            selectedType = typePills && typeOptions.length ? typeOptions[0].id : null;
+            applyAnswerHints(selectedType);
+            refreshPills();
+            applyOptionsOpen();
+            if (optionsToggle) {
+              optionsToggle.addEventListener('click', function () {
+                optionsOpen = !optionsOpen;
+                applyOptionsOpen();
               });
             }
-            gradeEl.addEventListener('change', loadProblem);
             checkBtn.addEventListener('click', checkAnswer);
             nextBtn.addEventListener('click', loadProblem);
             answerEl.addEventListener('keydown', function (e) {
@@ -1238,6 +1523,107 @@
               inputMode: 'text',
             });
             wirePractice('times_as_many');
+            return;
+          }
+
+          if (state.route === 'math/money-count') {
+            els.app.innerHTML = practiceShell({
+              showType: true,
+              typeLabel: 'Money type',
+              badge: 'Money — coins & bills',
+              answerLabel: 'Your answer',
+              answerPlaceholder: 'e.g. $1.35 or 135¢',
+              inputMode: 'decimal',
+            });
+            wirePractice('money_count');
+            return;
+          }
+
+          if (state.route === 'math/money-change') {
+            els.app.innerHTML = practiceShell({
+              showType: false,
+              badge: 'Money — change',
+              answerLabel: 'Change',
+              answerPlaceholder: 'e.g. $0.25 or 25¢',
+              inputMode: 'decimal',
+            });
+            wirePractice('money_change');
+            return;
+          }
+
+          if (state.route === 'math/money-compare') {
+            els.app.innerHTML = practiceShell({
+              showType: false,
+              badge: 'Money — compare',
+              answerLabel: 'Compare',
+              answerPlaceholder: '<, >, or =',
+              inputMode: 'text',
+            });
+            wirePractice('money_compare');
+            return;
+          }
+
+          if (state.route === 'math/measurement') {
+            els.app.innerHTML = practiceShell({
+              showType: true,
+              typeLabel: 'Category',
+              badge: 'Measurement',
+              answerLabel: 'Converted amount',
+              answerPlaceholder: 'Type the number',
+              inputMode: 'numeric',
+            });
+            wirePractice('measurement');
+            return;
+          }
+
+          if (state.route === 'math/time') {
+            els.app.innerHTML = practiceShell({
+              showType: true,
+              typeLabel: 'Time type',
+              badge: 'Time',
+              answerLabel: 'Time',
+              answerPlaceholder: 'e.g. 3:30',
+              inputMode: 'text',
+            });
+            wirePractice('time');
+            return;
+          }
+
+          if (state.route === 'math/fractions') {
+            els.app.innerHTML = practiceShell({
+              showType: true,
+              typeLabel: 'Fraction type',
+              badge: 'Fractions',
+              answerLabel: 'Your answer',
+              answerPlaceholder: 'e.g. 3/4 or 1 1/2',
+              inputMode: 'text',
+            });
+            wirePractice('fractions');
+            return;
+          }
+
+          if (state.route === 'math/order-of-operations') {
+            els.app.innerHTML = practiceShell({
+              showType: false,
+              badge: 'Order of operations',
+              answerLabel: 'Value',
+              answerPlaceholder: 'Type the result',
+              inputMode: 'numeric',
+            });
+            wirePractice('order_of_operations');
+            return;
+          }
+
+          if (state.route === 'math/input-output') {
+            els.app.innerHTML = practiceShell({
+              showType: true,
+              typeLabel: 'Table type',
+              badge: 'Input/output',
+              answerLabel: 'Your answer',
+              answerPlaceholder: 'Missing values or rule like + 5',
+              inputMode: 'text',
+            });
+            wirePractice('input_output');
             return;
           }
 

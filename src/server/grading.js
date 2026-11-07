@@ -3,6 +3,8 @@ import {
   normalizeFactorPairsAnswer,
   normalizeListAnswer,
 } from './phase2.js';
+import { normalizeTimeAnswer, parseMoneyToCents } from './phase3.js';
+import { normalizeFractionAnswer, normalizeIoRule } from './phase4.js';
 import { normalizeExpandedAnswer } from './place-value.js';
 
 const normalizeYesNo = (value) => {
@@ -64,6 +66,23 @@ export const normalizeAnswer = (value, options = {}) => {
     return normalizeSymbol(value);
   }
 
+  if (options.kind === 'money') {
+    const cents = parseMoneyToCents(value);
+    return cents === null ? '' : String(cents);
+  }
+
+  if (options.kind === 'time') {
+    return normalizeTimeAnswer(value);
+  }
+
+  if (options.kind === 'fraction') {
+    return normalizeFractionAnswer(value);
+  }
+
+  if (options.kind === 'io_rule') {
+    return normalizeIoRule(value);
+  }
+
   let text = String(value).trim().toLowerCase();
   text = text.replace(/[$,]/g, '');
   text = text.replace(/\s+/g, ' ');
@@ -105,6 +124,12 @@ export const answersMatch = (userAnswer, correctAnswer, options = {}) => {
   if (kind === 'equation_list' && Array.isArray(options.accepted)) {
     const got = normalizeEquation(userAnswer);
     return options.accepted.some((form) => normalizeEquation(form) === got);
+  }
+
+  if (kind === 'money') {
+    const userCents = parseMoneyToCents(userAnswer);
+    const expected = Number(correctAnswer);
+    return userCents !== null && Number.isFinite(expected) && userCents === expected;
   }
 
   return normalizeAnswer(userAnswer, options) === normalizeAnswer(correctAnswer, options);

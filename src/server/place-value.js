@@ -1,3 +1,5 @@
+import { scaleRange } from './difficulty.js';
+
 const ONES = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 const TEENS = [
   'ten',
@@ -100,17 +102,18 @@ const gradeBounds = (grade) => {
   return { min: 10000, max: 999999 };
 };
 
-export const randomPlaceNumber = (grade) => {
-  const { min, max } = gradeBounds(grade);
+export const randomPlaceNumber = (grade, difficulty = 'medium') => {
+  const { min, max } = scaleRange(gradeBounds(grade), difficulty);
   return randomInt(min, max);
 };
 
-export const generatePlaceValue = ({ grade, type } = {}) => {
+export const generatePlaceValue = ({ grade, type, difficulty } = {}) => {
   const kind = normalizePlaceValueType(type);
   const g = Number(grade) || 3;
+  const nFor = () => randomPlaceNumber(g, difficulty);
 
   if (kind === 'digit_value') {
-    const n = randomPlaceNumber(g);
+    const n = nFor();
     const nonzero = PLACES.filter((place) => place.value <= n && digitAt(n, place.value) > 0);
     const place = pick(nonzero.length ? nonzero : PLACES.filter((p) => p.value <= n));
     const digit = digitAt(n, place.value);
@@ -124,7 +127,7 @@ export const generatePlaceValue = ({ grade, type } = {}) => {
   }
 
   if (kind === 'standard') {
-    const n = randomPlaceNumber(g);
+    const n = nFor();
     const stimulus = expandedForm(n);
     return {
       type: kind,
@@ -135,7 +138,7 @@ export const generatePlaceValue = ({ grade, type } = {}) => {
   }
 
   if (kind === 'expanded') {
-    const n = randomPlaceNumber(g);
+    const n = nFor();
     return {
       type: kind,
       prompt: `Write ${formatNumber(n)} in expanded form.`,
@@ -146,7 +149,7 @@ export const generatePlaceValue = ({ grade, type } = {}) => {
   }
 
   if (kind === 'word') {
-    const n = randomPlaceNumber(g);
+    const n = nFor();
     const word = numberToWord(n);
     return {
       type: kind,
@@ -157,8 +160,8 @@ export const generatePlaceValue = ({ grade, type } = {}) => {
   }
 
   // compare
-  const left = randomPlaceNumber(g);
-  let right = randomPlaceNumber(g);
+  const left = nFor();
+  let right = nFor();
   if (Math.random() < 0.12) right = left;
   const answer = left < right ? '<' : left > right ? '>' : '=';
   return {

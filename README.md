@@ -1,3 +1,32 @@
+# Kids Homework Playground
+
+Grade 3–5 homework practice web app built on the [apps-script-starter](https://github.com/labnol/apps-script-starter) toolchain (Vite + clasp).
+
+| Resource | Link |
+| --- | --- |
+| Google Sites | https://sites.google.com/view/k2-playground-1/playground |
+| Web app | https://script.google.com/macros/s/AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ1uhd8B3-RjHH/exec |
+| Agent notes | [`AGENTS.md`](AGENTS.md) |
+| Specs | [`specs/`](specs/) |
+
+Live Math activities: Addition, Subtraction, Multiplication, Division, Place value, Rounding, Factors & multiples, Missing symbol, Estimate, Times as many, Money (count/change/compare), Measurement, Time, Fractions, Order of operations, Input/output, Word problems.
+
+```bash
+npm install
+npm run dev      # watch build
+npm test
+npm run deploy   # vite build + clasp push
+```
+
+After push, update the web app deployment:
+
+```bash
+npx clasp version "message"
+npx clasp deploy -i AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ1uhd8B3-RjHH -d "notes"
+```
+
+---
+
 # Google Apps Script Starter Kit
 
 [![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-V8-blue)](https://developers.google.com/apps-script)

@@ -48,7 +48,7 @@ Radius: `--radius: 0.75rem` (`rounded-lg` cards, `rounded-md` controls). Prefer 
 
 - **Shell:** fixed/sticky dark sidebar + light main canvas
 - **Homepage:** quote hero (Fraunces) + illustrative visual panel + secondary quote cards + activity jump cards
-- **Activity pages:** grade/type controls above a single problem card (prompt → answer → check/next)
+- **Activity pages:** collapsible Options panel (summary when closed). Grade + Difficulty share one row; type pills sit below when needed. Then a single problem card (prompt → answer → check/next)
 - **Coming soon:** simple card with subject context and return-home CTA
 
 ## Components (shadcn-style)

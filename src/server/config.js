@@ -8,6 +8,8 @@ export const SHEET_NAMES = {
 
 export const GRADES = [3, 4, 5];
 
+export { DIFFICULTIES, normalizeDifficulty } from './difficulty.js';
+
 export const WORD_PROBLEM_TYPES = [
   { id: 'operations', label: 'Operations' },
   { id: 'add_then_subtract', label: 'Add then subtract' },
@@ -74,5 +76,16 @@ export {
   ROUNDING_TYPES,
   TIMES_AS_MANY_TYPES,
 } from './phase2.js';
+
+export {
+  MEASUREMENT_TYPES,
+  MONEY_COUNT_TYPES,
+  TIME_TYPES,
+} from './phase3.js';
+
+export {
+  FRACTION_TYPES,
+  INPUT_OUTPUT_TYPES,
+} from './phase4.js';
 
 export const PROBLEM_CACHE_SECONDS = 30 * 60;

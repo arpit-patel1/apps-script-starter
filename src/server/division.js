@@ -11,13 +11,21 @@ export const formatDivisionAnswer = (quotient, remainder) => {
   return `${quotient} r ${remainder}`;
 };
 
-export const generateDivision = ({ grade, type } = {}) => {
+export const generateDivision = ({ grade, type, difficulty } = {}) => {
   const kind = normalizeDivisionType(type);
   const g = Number(grade) || 3;
+  const level = String(difficulty || 'medium');
 
   if (kind === 'facts') {
-    const divisor = g <= 3 ? randomInt(2, 10) : randomInt(6, 12);
-    const quotient = g <= 3 ? randomInt(2, 10) : randomInt(6, 12);
+    let divisorMax = g <= 3 ? 10 : 12;
+    let divisorMin = g <= 3 ? 2 : 6;
+    if (level === 'easy') {
+      divisorMax = Math.min(divisorMax, 5);
+      divisorMin = 2;
+    }
+    if (level === 'hard') divisorMin = Math.max(divisorMin, g <= 3 ? 6 : 8);
+    const divisor = randomInt(divisorMin, divisorMax);
+    const quotient = randomInt(divisorMin, divisorMax);
     return {
       type: kind,
       dividend: divisor * quotient,
@@ -28,17 +36,23 @@ export const generateDivision = ({ grade, type } = {}) => {
     };
   }
 
-  const divisor = randomInt(2, 9);
+  const divisor = level === 'easy' ? randomInt(2, 5) : randomInt(2, 9);
   let quotient;
   if (g <= 3) {
-    quotient = randomInt(2, 99);
+    quotient = level === 'easy' ? randomInt(2, 20) : level === 'hard' ? randomInt(20, 99) : randomInt(2, 99);
   } else if (g === 4) {
-    quotient = randomInt(10, 99);
+    quotient = level === 'easy' ? randomInt(10, 40) : level === 'hard' ? randomInt(40, 99) : randomInt(10, 99);
   } else {
-    quotient = randomInt(100, 999);
+    quotient =
+      level === 'easy' ? randomInt(100, 300) : level === 'hard' ? randomInt(400, 999) : randomInt(100, 999);
   }
 
-  const remainder = kind === 'long_division' && Math.random() < 0.35 ? 0 : randomInt(0, divisor - 1);
+  const remainder =
+    kind === 'long_division' && (level === 'hard' || Math.random() < 0.35)
+      ? randomInt(0, divisor - 1)
+      : level === 'easy'
+        ? 0
+        : randomInt(0, divisor - 1);
   const dividend = divisor * quotient + remainder;
 
   return {

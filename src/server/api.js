@@ -1,12 +1,19 @@
 import {
+  DIFFICULTIES,
   DIVISION_TYPES,
   FACTORS_TYPES,
+  FRACTION_TYPES,
   GRADES,
+  INPUT_OUTPUT_TYPES,
+  MEASUREMENT_TYPES,
+  MONEY_COUNT_TYPES,
   MULTIPLICATION_TYPES,
   PLACE_VALUE_TYPES,
   ROUNDING_TYPES,
+  TIME_TYPES,
   TIMES_AS_MANY_TYPES,
   WORD_PROBLEM_TYPES,
+  normalizeDifficulty,
 } from './config.js';
 import { answersMatch } from './grading.js';
 import {
@@ -14,13 +21,22 @@ import {
   createDivisionProblem,
   createEstimateProblem,
   createFactorsProblem,
+  createFractionsProblem,
+  createInputOutputProblem,
+  createMeasurementProblem,
   createMissingSymbolProblem,
+  createMoneyChangeProblem,
+  createMoneyCompareProblem,
+  createMoneyCountProblem,
   createMultiplicationProblem,
+  createOrderOfOperationsProblem,
   createPlaceValueProblem,
   createRoundingProblem,
   createSubtractionProblem,
+  createTimeProblem,
   createTimesAsManyProblem,
   createWordProblem,
+  formatCents,
   lookupWordProblemAnswer,
   recallAnswer,
   recallAnswerExtra,
@@ -42,6 +58,7 @@ export const getMeta = () => {
   ensureDatabase();
   return {
     grades: GRADES,
+    difficulties: DIFFICULTIES,
     modes: [
       { id: 'addition', label: 'Addition' },
       { id: 'subtraction', label: 'Subtraction' },
@@ -53,6 +70,14 @@ export const getMeta = () => {
       { id: 'missing_symbol', label: 'Missing symbol' },
       { id: 'estimate', label: 'Estimate' },
       { id: 'times_as_many', label: 'Times as many' },
+      { id: 'money_count', label: 'Money — coins & bills' },
+      { id: 'money_change', label: 'Money — change' },
+      { id: 'money_compare', label: 'Money — compare' },
+      { id: 'measurement', label: 'Measurement' },
+      { id: 'time', label: 'Time' },
+      { id: 'fractions', label: 'Fractions' },
+      { id: 'order_of_operations', label: 'Order of operations' },
+      { id: 'input_output', label: 'Input/output' },
       { id: 'word', label: 'Word problem' },
     ],
     types: WORD_PROBLEM_TYPES,
@@ -62,6 +87,11 @@ export const getMeta = () => {
     roundingTypes: ROUNDING_TYPES,
     factorsTypes: FACTORS_TYPES,
     timesAsManyTypes: TIMES_AS_MANY_TYPES,
+    moneyCountTypes: MONEY_COUNT_TYPES,
+    measurementTypes: MEASUREMENT_TYPES,
+    timeTypes: TIME_TYPES,
+    fractionTypes: FRACTION_TYPES,
+    inputOutputTypes: INPUT_OUTPUT_TYPES,
   };
 };
 
@@ -84,6 +114,7 @@ export const getNextProblem = (options = {}) => {
   const mode = String(options.mode || 'multiplication');
   const grade = Number(options.grade || 3);
   const type = options.type || null;
+  const difficulty = normalizeDifficulty(options.difficulty);
   const excludeId = options.excludeId || null;
 
   if (!GRADES.includes(grade)) {
@@ -91,34 +122,58 @@ export const getNextProblem = (options = {}) => {
   }
 
   if (mode === 'addition') {
-    return createAdditionProblem({ grade, excludeId });
+    return createAdditionProblem({ grade, difficulty, excludeId });
   }
   if (mode === 'subtraction') {
-    return createSubtractionProblem({ grade, excludeId });
+    return createSubtractionProblem({ grade, difficulty, excludeId });
   }
   if (mode === 'multiplication') {
-    return createMultiplicationProblem({ grade, type, excludeId });
+    return createMultiplicationProblem({ grade, type, difficulty, excludeId });
   }
   if (mode === 'division') {
-    return createDivisionProblem({ grade, type, excludeId });
+    return createDivisionProblem({ grade, type, difficulty, excludeId });
   }
   if (mode === 'place_value') {
-    return createPlaceValueProblem({ grade, type, excludeId });
+    return createPlaceValueProblem({ grade, type, difficulty, excludeId });
   }
   if (mode === 'rounding') {
-    return createRoundingProblem({ grade, type, excludeId });
+    return createRoundingProblem({ grade, type, difficulty, excludeId });
   }
   if (mode === 'factors') {
-    return createFactorsProblem({ grade, type, excludeId });
+    return createFactorsProblem({ grade, type, difficulty, excludeId });
   }
   if (mode === 'missing_symbol') {
-    return createMissingSymbolProblem({ grade, excludeId });
+    return createMissingSymbolProblem({ grade, difficulty, excludeId });
   }
   if (mode === 'estimate') {
-    return createEstimateProblem({ grade, excludeId });
+    return createEstimateProblem({ grade, difficulty, excludeId });
   }
   if (mode === 'times_as_many') {
-    return createTimesAsManyProblem({ grade, type, excludeId });
+    return createTimesAsManyProblem({ grade, type, difficulty, excludeId });
+  }
+  if (mode === 'money_count') {
+    return createMoneyCountProblem({ grade, type, difficulty, excludeId });
+  }
+  if (mode === 'money_change') {
+    return createMoneyChangeProblem({ grade, difficulty, excludeId });
+  }
+  if (mode === 'money_compare') {
+    return createMoneyCompareProblem({ grade, difficulty, excludeId });
+  }
+  if (mode === 'measurement') {
+    return createMeasurementProblem({ grade, type, difficulty, excludeId });
+  }
+  if (mode === 'time') {
+    return createTimeProblem({ grade, type, difficulty, excludeId });
+  }
+  if (mode === 'fractions') {
+    return createFractionsProblem({ grade, type, difficulty, excludeId });
+  }
+  if (mode === 'order_of_operations') {
+    return createOrderOfOperationsProblem({ grade, difficulty, excludeId });
+  }
+  if (mode === 'input_output') {
+    return createInputOutputProblem({ grade, type, difficulty, excludeId });
   }
   if (mode === 'word') {
     return createWordProblem({ grade, type, excludeId });
@@ -161,6 +216,8 @@ export const checkAnswer = (options = {}) => {
     reveal = `any number from ${extra.range.min} to ${extra.range.max}`;
   } else if (answerKind === 'accepted_list' && Array.isArray(extra.accepted)) {
     reveal = extra.accepted.join(' or ');
+  } else if (answerKind === 'money' && Number.isFinite(Number(correctAnswer))) {
+    reveal = formatCents(Number(correctAnswer));
   }
 
   return {

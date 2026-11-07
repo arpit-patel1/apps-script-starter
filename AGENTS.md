@@ -6,7 +6,7 @@ This repo is the **Kids Homework Playground**: a Google Apps Script web app for 
 
 - **Delivery:** Deployed Apps Script web app (browser URL), not a Sheets sidebar.
 - **Shell:** Dark teal side nav + light paper main canvas. Default route is **Homepage**.
-- **Live Math activities:** Addition, Subtraction, Multiplication, Division, Place value, Rounding, Factors & multiples, Missing symbol, Estimate, Times as many (generated), Word problems (Sheet-backed).
+- **Live Math activities:** Addition, Subtraction, Multiplication, Division, Place value, Rounding, Factors & multiples, Missing symbol, Estimate, Times as many, Money (count/change/compare), Measurement, Time, Fractions, Order of operations, Input/output (generated), Word problems (Sheet-backed).
 - **Planned subjects in nav:** ELA, Geometry, Geography (sub-items show Coming soon).
 - **Homepage:** Featured + supporting quotes from the `Quotes` sheet, illustrative visuals, quick activity jumps.
 - **Upstream catalog:** Many activity ideas come from `network-element-ai` (`app/protected/math-homework/`, `lib/math/`).
@@ -19,6 +19,7 @@ This repo is the **Kids Homework Playground**: a Google Apps Script web app for 
 | Bound script | `1iirAuXr-tdKGXhxtdNtp4E9uhoocAb_oXTVp8ObAdgBC2UVq3Na0K1nx` |
 | Web app deployment | `AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ1uhd8B3-RjHH` |
 | Web app URL | https://script.google.com/macros/s/AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ1uhd8B3-RjHH/exec |
+| Google Sites | https://sites.google.com/view/k2-playground-1/playground |
 
 Spreadsheet ID is also in `src/server/config.js`. Clasp `scriptId` is in `.clasp.json`.
 
@@ -61,6 +62,8 @@ Product and design specs live in [`specs/`](specs/). Implement against those spe
 | Ops phase 1 | [`specs/operations-phase1.md`](specs/operations-phase1.md) |
 | Place value | [`specs/place-value.md`](specs/place-value.md) |
 | Ops phase 2 | [`specs/operations-phase2.md`](specs/operations-phase2.md) |
+| Ops phase 3 | [`specs/operations-phase3.md`](specs/operations-phase3.md) |
+| Ops phase 4 | [`specs/operations-phase4.md`](specs/operations-phase4.md) |
 
 ## UI theme (required)
 

@@ -1,3 +1,5 @@
+import { normalizeDifficulty, scaleRange } from './difficulty.js';
+
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const pick = (items) => items[Math.floor(Math.random() * items.length)];
 const fmt = (n) => Number(n).toLocaleString('en-US');
@@ -28,12 +30,13 @@ const roundOptionsForGrade = (grade) => {
   return [10, 100, 1000, 10000];
 };
 
-export const generateRounding = ({ grade, type } = {}) => {
+export const generateRounding = ({ grade, type, difficulty } = {}) => {
   const kind = type === 'reverse' ? 'reverse' : 'forward';
   const g = Number(grade) || 3;
-  const max = g <= 3 ? 9999 : g === 4 ? 99999 : 1000000;
+  const baseMax = g <= 3 ? 9999 : g === 4 ? 99999 : 1000000;
+  const { max } = scaleRange({ min: 20, max: baseMax }, difficulty);
   const roundTo = pick(roundOptionsForGrade(g));
-  const number = randomInt(roundTo + 1, max);
+  const number = randomInt(roundTo + 1, Math.max(roundTo + 2, max));
   const answer = roundToPlace(number, roundTo);
 
   if (kind === 'reverse') {
@@ -106,9 +109,10 @@ export const normalizeListAnswer = (value) =>
     .filter((part) => part !== 'NaN')
     .join(',');
 
-export const generateFactors = ({ grade, type } = {}) => {
+export const generateFactors = ({ grade, type, difficulty } = {}) => {
   const g = Number(grade) || 3;
-  const max = g <= 3 ? 24 : g === 4 ? 60 : 100;
+  const baseMax = g <= 3 ? 24 : g === 4 ? 60 : 100;
+  const { max } = scaleRange({ min: 6, max: baseMax }, difficulty);
   const kind =
     type === 'multiples' || type === 'list_multiples' || type === 'prime_composite'
       ? type
@@ -167,13 +171,15 @@ export const generateFactors = ({ grade, type } = {}) => {
   };
 };
 
-export const generateMissingSymbol = ({ grade } = {}) => {
+export const generateMissingSymbol = ({ grade, difficulty } = {}) => {
   const g = Number(grade) || 3;
+  const level = normalizeDifficulty(difficulty);
+  const compareMax = level === 'easy' ? 20 : level === 'hard' ? (g <= 3 ? 100 : 200) : g <= 3 ? 50 : 100;
   const kind = pick(['op', 'op', 'compare', 'expr']);
 
   if (kind === 'compare') {
-    const a = randomInt(1, g <= 3 ? 50 : 100);
-    let b = randomInt(1, g <= 3 ? 50 : 100);
+    const a = randomInt(1, compareMax);
+    let b = randomInt(1, compareMax);
     if (Math.random() < 0.2) b = a;
     const answer = a < b ? '<' : a > b ? '>' : '=';
     return {
@@ -240,13 +246,14 @@ export const generateMissingSymbol = ({ grade } = {}) => {
   };
 };
 
-export const generateEstimate = ({ grade } = {}) => {
+export const generateEstimate = ({ grade, difficulty } = {}) => {
   const g = Number(grade) || 3;
-  const op = pick(g <= 3 ? ['add', 'sub'] : ['add', 'sub', 'mult']);
+  const level = normalizeDifficulty(difficulty);
+  const op = pick(g <= 3 || level === 'easy' ? ['add', 'sub'] : ['add', 'sub', 'mult']);
 
   if (op === 'mult') {
-    const a = randomInt(11, 99);
-    const b = randomInt(3, 9);
+    const a = level === 'easy' ? randomInt(11, 40) : level === 'hard' ? randomInt(50, 99) : randomInt(11, 99);
+    const b = level === 'easy' ? randomInt(3, 5) : randomInt(3, 9);
     const ra = roundToPlace(a, 10);
     const answer = ra * b;
     return {
@@ -259,9 +266,10 @@ export const generateEstimate = ({ grade } = {}) => {
     };
   }
 
-  const max = g <= 3 ? 9999 : g === 4 ? 99999 : 999999;
-  let a = randomInt(Math.floor(max / 10), max);
-  let b = randomInt(Math.floor(max / 20), Math.floor(max / 2));
+  const baseMax = g <= 3 ? 9999 : g === 4 ? 99999 : 999999;
+  const { max } = scaleRange({ min: Math.floor(baseMax / 20), max: baseMax }, level);
+  let a = randomInt(Math.max(20, Math.floor(max / 10)), max);
+  let b = randomInt(Math.max(10, Math.floor(max / 20)), Math.max(11, Math.floor(max / 2)));
   if (op === 'sub' && b > a) [a, b] = [b, a];
   const roundTo = a >= 1000 ? 100 : 10;
   const ra = roundToPlace(a, roundTo);
@@ -292,10 +300,19 @@ export const normalizeEquation = (input) =>
     .replace(/\*/g, 'x')
     .replace(/\s+/g, '');
 
-export const generateTimesAsMany = ({ grade, type } = {}) => {
+export const generateTimesAsMany = ({ grade, type, difficulty } = {}) => {
   const g = Number(grade) || 3;
-  const timesMax = g <= 3 ? 5 : g === 4 ? 8 : 12;
-  const smallMax = g <= 3 ? 12 : 20;
+  const level = normalizeDifficulty(difficulty);
+  let timesMax = g <= 3 ? 5 : g === 4 ? 8 : 12;
+  let smallMax = g <= 3 ? 12 : 20;
+  if (level === 'easy') {
+    timesMax = Math.min(timesMax, 4);
+    smallMax = Math.min(smallMax, 10);
+  }
+  if (level === 'hard') {
+    timesMax = g <= 3 ? 8 : 12;
+    smallMax = g <= 3 ? 20 : 30;
+  }
   const times = randomInt(2, timesMax);
   const smaller = randomInt(2, smallMax);
   const larger = smaller * times;
