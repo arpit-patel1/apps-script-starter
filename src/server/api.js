@@ -16,6 +16,7 @@ import {
   WORD_PROBLEM_TYPES,
   normalizeDifficulty,
 } from './config.js';
+import { requireUser } from './auth.js';
 import { answersMatch } from './grading.js';
 import {
   createAdditionProblem,
@@ -56,7 +57,10 @@ const shuffle = (items) => {
   return copy;
 };
 
-export const getMeta = () => {
+export { getSession, login, logout } from './auth.js';
+
+export const getMeta = (options = {}) => {
+  requireUser(options.token);
   ensureDatabase();
   return {
     grades: GRADES,
@@ -100,7 +104,8 @@ export const getMeta = () => {
 };
 
 /** Homepage content: random active quotes from the Quotes sheet. */
-export const getHomeContent = () => {
+export const getHomeContent = (options = {}) => {
+  requireUser(options.token);
   ensureDatabase();
   const config = getConfigMap();
   const requested = Number(config.home_quote_count);
@@ -114,6 +119,7 @@ export const getHomeContent = () => {
 };
 
 export const getNextProblem = (options = {}) => {
+  requireUser(options.token);
   ensureDatabase();
   const mode = String(options.mode || 'multiplication');
   const grade = Number(options.grade || 3);
@@ -190,6 +196,7 @@ export const getNextProblem = (options = {}) => {
 };
 
 export const checkAnswer = (options = {}) => {
+  requireUser(options.token);
   const mode = String(options.mode || '');
   const id = String(options.id || '');
   const userAnswer = options.userAnswer;

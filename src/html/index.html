@@ -259,69 +259,133 @@
     </style>
   </head>
   <body class="min-h-screen font-sans text-foreground antialiased">
-    <div class="flex min-h-screen">
-      <!-- Overlay (mobile) -->
-      <div id="sidebar-overlay" class="fixed inset-0 z-40 hidden bg-foreground/40 backdrop-blur-sm md:hidden"></div>
+    <div id="login-screen" class="hidden min-h-screen px-4 py-10 sm:px-6">
+      <div class="mx-auto flex min-h-[calc(100vh-5rem)] max-w-md flex-col justify-center">
+        <section class="animate-fade-up rounded-lg border border-border bg-card p-6 shadow-sm sm:p-8">
+          <div class="mb-6 flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-md bg-accent font-display text-sm font-bold text-accent-foreground">
+              KP
+            </div>
+            <div>
+              <p class="font-display text-2xl font-semibold tracking-tight">Kids Playground</p>
+              <p class="text-sm text-muted-foreground">Sign in with your username</p>
+            </div>
+          </div>
+          <form id="login-form" class="space-y-4">
+            <div class="space-y-2">
+              <label for="login-username" class="text-sm font-medium">Username</label>
+              <input
+                id="login-username"
+                name="username"
+                type="text"
+                autocomplete="username"
+                required
+                class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            <div class="space-y-2">
+              <label for="login-password" class="text-sm font-medium">Password</label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            <p id="login-error" class="hidden text-sm font-medium text-destructive" role="alert"></p>
+            <button
+              id="login-submit"
+              type="submit"
+              class="inline-flex h-11 w-full items-center justify-center rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow hover:opacity-90 disabled:opacity-50"
+            >
+              Sign in
+            </button>
+          </form>
+        </section>
+      </div>
+    </div>
 
-      <!-- Sidebar -->
-      <aside
-        id="sidebar"
-        class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-200 md:static md:translate-x-0"
-      >
-        <div class="flex items-center gap-3 border-b border-sidebar-border px-4 py-4">
-          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent font-display text-sm font-bold text-accent-foreground">
-            KP
+    <div id="app-shell" class="hidden min-h-screen">
+      <div class="flex min-h-screen">
+        <!-- Overlay (mobile) -->
+        <div id="sidebar-overlay" class="fixed inset-0 z-40 hidden bg-foreground/40 backdrop-blur-sm md:hidden"></div>
+
+        <!-- Sidebar -->
+        <aside
+          id="sidebar"
+          class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-200 md:static md:translate-x-0"
+        >
+          <div class="flex items-center gap-3 border-b border-sidebar-border px-4 py-4">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent font-display text-sm font-bold text-accent-foreground">
+              KP
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="font-display text-lg font-semibold leading-none tracking-tight">Playground</p>
+              <p class="mt-1 text-xs text-sidebar-foreground/65">Homework lab</p>
+            </div>
+            <button
+              id="sidebar-collapse"
+              type="button"
+              class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              aria-label="Collapse sidebar"
+              title="Collapse sidebar"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 6 9 12l6 6" />
+              </svg>
+            </button>
           </div>
-          <div class="min-w-0 flex-1">
-            <p class="font-display text-lg font-semibold leading-none tracking-tight">Playground</p>
-            <p class="mt-1 text-xs text-sidebar-foreground/65">Homework lab</p>
-          </div>
-          <button
-            id="sidebar-collapse"
-            type="button"
-            class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            aria-label="Collapse sidebar"
-            title="Collapse sidebar"
-          >
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 6 9 12l6 6" />
-            </svg>
-          </button>
+
+          <nav class="flex-1 overflow-y-auto px-3 py-4" id="side-nav" aria-label="Activities"></nav>
+        </aside>
+
+        <!-- Main -->
+        <div class="flex min-w-0 flex-1 flex-col">
+          <header class="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-card/90 px-4 py-3 backdrop-blur sm:px-6">
+            <button
+              id="menu-btn"
+              type="button"
+              class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background shadow-sm"
+              aria-label="Toggle sidebar"
+              title="Toggle sidebar"
+            >
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <div class="min-w-0 flex-1">
+              <p id="crumb" class="truncate text-sm text-muted-foreground">Home</p>
+              <h1 id="page-title" class="font-display truncate text-xl font-semibold tracking-tight sm:text-2xl">Homepage</h1>
+            </div>
+            <p id="user-label" class="hidden max-w-[8rem] truncate text-sm font-medium text-muted-foreground sm:block"></p>
+            <button
+              id="logout-btn"
+              type="button"
+              class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background shadow-sm transition hover:bg-muted"
+              aria-label="Sign out"
+              title="Sign out"
+            >
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <path d="m16 17 5-5-5-5" />
+                <path d="M21 12H9" />
+              </svg>
+            </button>
+            <button
+              id="theme-toggle"
+              type="button"
+              class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background shadow-sm transition hover:bg-muted"
+              aria-label="Toggle color theme"
+              title="Toggle color theme"
+            >
+              <span id="theme-icon" class="inline-flex h-5 w-5 items-center justify-center" aria-hidden="true"></span>
+            </button>
+          </header>
+
+          <main id="app" class="flex-1 px-4 py-6 sm:px-6 lg:px-8"></main>
         </div>
-
-        <nav class="flex-1 overflow-y-auto px-3 py-4" id="side-nav" aria-label="Activities"></nav>
-      </aside>
-
-      <!-- Main -->
-      <div class="flex min-w-0 flex-1 flex-col">
-        <header class="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-card/90 px-4 py-3 backdrop-blur sm:px-6">
-          <button
-            id="menu-btn"
-            type="button"
-            class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background shadow-sm"
-            aria-label="Toggle sidebar"
-            title="Toggle sidebar"
-          >
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <div class="min-w-0 flex-1">
-            <p id="crumb" class="truncate text-sm text-muted-foreground">Home</p>
-            <h1 id="page-title" class="font-display truncate text-xl font-semibold tracking-tight sm:text-2xl">Homepage</h1>
-          </div>
-          <button
-            id="theme-toggle"
-            type="button"
-            class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background shadow-sm transition hover:bg-muted"
-            aria-label="Toggle color theme"
-            title="Toggle color theme"
-          >
-            <span id="theme-icon" class="inline-flex h-5 w-5 items-center justify-center" aria-hidden="true"></span>
-          </button>
-        </header>
-
-        <main id="app" class="flex-1 px-4 py-6 sm:px-6 lg:px-8"></main>
       </div>
     </div>
 
@@ -488,6 +552,8 @@
         };
         var THEME_LABELS = { light: 'Light', dark: 'Dark', system: 'Auto' };
 
+        var TOKEN_KEY = 'kp-auth-token';
+
         var state = {
           route: 'home',
           meta: null,
@@ -495,20 +561,94 @@
           openGroups: { math: true, ela: false, geometry: false, geography: false },
           sidebarOpen: true,
           theme: 'system',
+          token: null,
+          user: null,
         };
 
         var els = {
+          loginScreen: document.getElementById('login-screen'),
+          appShell: document.getElementById('app-shell'),
+          loginForm: document.getElementById('login-form'),
+          loginUsername: document.getElementById('login-username'),
+          loginPassword: document.getElementById('login-password'),
+          loginError: document.getElementById('login-error'),
+          loginSubmit: document.getElementById('login-submit'),
           sidebar: document.getElementById('sidebar'),
           overlay: document.getElementById('sidebar-overlay'),
           menuBtn: document.getElementById('menu-btn'),
           collapseBtn: document.getElementById('sidebar-collapse'),
           themeToggle: document.getElementById('theme-toggle'),
           themeIcon: document.getElementById('theme-icon'),
+          logoutBtn: document.getElementById('logout-btn'),
+          userLabel: document.getElementById('user-label'),
           sideNav: document.getElementById('side-nav'),
           app: document.getElementById('app'),
           crumb: document.getElementById('crumb'),
           pageTitle: document.getElementById('page-title'),
         };
+
+        function readStoredToken() {
+          try {
+            return sessionStorage.getItem(TOKEN_KEY) || null;
+          } catch (ignore) {
+            return null;
+          }
+        }
+
+        function writeStoredToken(token) {
+          try {
+            if (token) sessionStorage.setItem(TOKEN_KEY, token);
+            else sessionStorage.removeItem(TOKEN_KEY);
+          } catch (ignore) {}
+        }
+
+        function withToken(payload) {
+          var next = payload ? Object.assign({}, payload) : {};
+          next.token = state.token;
+          return next;
+        }
+
+        function isAuthError(error) {
+          var message = error && error.message ? String(error.message) : String(error || '');
+          return /sign in|session expired/i.test(message);
+        }
+
+        function showLogin(message) {
+          state.token = null;
+          state.user = null;
+          state.meta = null;
+          writeStoredToken(null);
+          if (els.appShell) els.appShell.classList.add('hidden');
+          if (els.loginScreen) els.loginScreen.classList.remove('hidden');
+          if (els.loginError) {
+            if (message) {
+              els.loginError.textContent = message;
+              els.loginError.classList.remove('hidden');
+            } else {
+              els.loginError.textContent = '';
+              els.loginError.classList.add('hidden');
+            }
+          }
+          if (els.loginPassword) els.loginPassword.value = '';
+          if (els.loginUsername) els.loginUsername.focus();
+        }
+
+        function showShell() {
+          if (els.loginScreen) els.loginScreen.classList.add('hidden');
+          if (els.appShell) els.appShell.classList.remove('hidden');
+          if (els.userLabel) {
+            els.userLabel.textContent = (state.user && state.user.displayName) || '';
+            els.userLabel.classList.toggle('hidden', !state.user);
+          }
+        }
+
+        function handleAuthFailure(error) {
+          if (isAuthError(error)) {
+            showLogin(error && error.message ? error.message : 'Please sign in to continue.');
+            return true;
+          }
+          return false;
+        }
 
         function isMobileNav() {
           return window.matchMedia('(max-width: 767px)').matches;
@@ -1382,16 +1522,19 @@
               })
               .withFailureHandler(function (error) {
                 setBusy(false);
+                if (handleAuthFailure(error)) return;
                 promptEl.textContent = 'Could not load a problem.';
                 statusEl.textContent = error && error.message ? error.message : String(error);
               })
-              .getNextProblem({
-                mode: mode,
-                grade: Number(selectedGrade),
-                difficulty: selectedDifficulty,
-                type: typePills ? selectedType : null,
-                excludeId: state.problem ? state.problem.id : null,
-              });
+              .getNextProblem(
+                withToken({
+                  mode: mode,
+                  grade: Number(selectedGrade),
+                  difficulty: selectedDifficulty,
+                  type: typePills ? selectedType : null,
+                  excludeId: state.problem ? state.problem.id : null,
+                }),
+              );
           }
 
           function checkAnswer() {
@@ -1421,15 +1564,18 @@
               })
               .withFailureHandler(function (error) {
                 setBusy(false);
+                if (handleAuthFailure(error)) return;
                 statusEl.textContent = error && error.message ? error.message : String(error);
               })
-              .checkAnswer({
-                mode: state.problem.mode,
-                id: state.problem.id,
-                grade: state.problem.grade,
-                userAnswer: answerEl.value,
-                answerKind: state.problem.answerKind || null,
-              });
+              .checkAnswer(
+                withToken({
+                  mode: state.problem.mode,
+                  id: state.problem.id,
+                  grade: state.problem.grade,
+                  userAnswer: answerEl.value,
+                  answerKind: state.problem.answerKind || null,
+                }),
+              );
           }
 
           function boot(meta) {
@@ -1477,10 +1623,11 @@
             google.script.run
               .withSuccessHandler(boot)
               .withFailureHandler(function (error) {
+                if (handleAuthFailure(error)) return;
                 promptEl.textContent = 'Could not start activity.';
                 statusEl.textContent = error && error.message ? error.message : String(error);
               })
-              .getMeta();
+              .getMeta(withToken());
           }
         }
 
@@ -1504,7 +1651,8 @@
                 els.app.innerHTML = homePage(content);
                 bindGoButtons();
               })
-              .withFailureHandler(function () {
+              .withFailureHandler(function (error) {
+                if (handleAuthFailure(error)) return;
                 if (state.route !== 'home') return;
                 els.app.innerHTML = homePage({
                   featured: {
@@ -1515,7 +1663,7 @@
                 });
                 bindGoButtons();
               })
-              .getHomeContent();
+              .getHomeContent(withToken());
             return;
           }
 
@@ -1782,37 +1930,115 @@
           navigate('home');
         }
 
+        function startApp() {
+          showShell();
+          try {
+            var stored = localStorage.getItem('kp-sidebar-open');
+            if (stored === '0') state.sidebarOpen = false;
+            if (stored === '1') state.sidebarOpen = true;
+          } catch (ignore) {}
+          if (isMobileNav()) state.sidebarOpen = false;
+          applySidebarState();
+          renderNav();
+          navigate('home');
+
+          google.script.run
+            .withSuccessHandler(function (meta) {
+              state.meta = meta;
+            })
+            .withFailureHandler(function (error) {
+              handleAuthFailure(error);
+            })
+            .getMeta(withToken());
+        }
+
+        function submitLogin(event) {
+          if (event) event.preventDefault();
+          var username = els.loginUsername ? els.loginUsername.value : '';
+          var password = els.loginPassword ? els.loginPassword.value : '';
+          if (els.loginError) {
+            els.loginError.textContent = '';
+            els.loginError.classList.add('hidden');
+          }
+          if (els.loginSubmit) els.loginSubmit.disabled = true;
+          google.script.run
+            .withSuccessHandler(function (result) {
+              if (els.loginSubmit) els.loginSubmit.disabled = false;
+              state.token = result.token;
+              state.user = {
+                username: result.username,
+                displayName: result.displayName,
+              };
+              writeStoredToken(result.token);
+              startApp();
+            })
+            .withFailureHandler(function (error) {
+              if (els.loginSubmit) els.loginSubmit.disabled = false;
+              if (els.loginError) {
+                els.loginError.textContent =
+                  error && error.message ? error.message : 'Could not sign in.';
+                els.loginError.classList.remove('hidden');
+              }
+              if (els.loginPassword) {
+                els.loginPassword.value = '';
+                els.loginPassword.focus();
+              }
+            })
+            .login({ username: username, password: password });
+        }
+
+        function signOut() {
+          var token = state.token;
+          google.script.run
+            .withSuccessHandler(function () {
+              showLogin();
+            })
+            .withFailureHandler(function () {
+              showLogin();
+            })
+            .logout({ token: token });
+        }
+
+        function bootAuth() {
+          applyTheme(readStoredTheme());
+          var token = readStoredToken();
+          if (!token) {
+            showLogin();
+            return;
+          }
+          state.token = token;
+          google.script.run
+            .withSuccessHandler(function (session) {
+              if (!session || !session.authenticated) {
+                showLogin();
+                return;
+              }
+              state.user = {
+                username: session.username,
+                displayName: session.displayName,
+              };
+              startApp();
+            })
+            .withFailureHandler(function () {
+              showLogin();
+            })
+            .getSession({ token: token });
+        }
+
         els.menuBtn.addEventListener('click', toggleSidebar);
         if (els.collapseBtn) els.collapseBtn.addEventListener('click', function () {
           setSidebarOpen(false);
         });
         if (els.themeToggle) els.themeToggle.addEventListener('click', cycleTheme);
+        if (els.logoutBtn) els.logoutBtn.addEventListener('click', signOut);
+        if (els.loginForm) els.loginForm.addEventListener('submit', submitLogin);
         els.overlay.addEventListener('click', closeMobileNav);
         window.addEventListener('resize', applySidebarState);
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
           if (state.theme === 'system') applyTheme('system');
         });
 
-        applyTheme(readStoredTheme());
-
-        try {
-          var stored = localStorage.getItem('kp-sidebar-open');
-          if (stored === '0') state.sidebarOpen = false;
-          if (stored === '1') state.sidebarOpen = true;
-        } catch (ignore) {}
-        if (isMobileNav()) state.sidebarOpen = false;
-        applySidebarState();
-
-        // Prefetch meta so practice screens start faster
-        google.script.run
-          .withSuccessHandler(function (meta) {
-            state.meta = meta;
-          })
-          .withFailureHandler(function () {})
-          .getMeta();
-
-        renderNav();
-        navigate('home');
+        bootAuth();
       })();
     </script>
   </body>

@@ -4,7 +4,11 @@ export const SHEET_NAMES = {
   wordProblems: 'WordProblems',
   quotes: 'Quotes',
   config: 'Config',
+  users: 'Users',
 };
+
+/** Session cache TTL for username+PIN login (~12 hours). */
+export const SESSION_CACHE_SECONDS = 12 * 60 * 60;
 
 export const GRADES = [3, 4, 5];
 

@@ -50,7 +50,8 @@ Radius: `--radius: 0.75rem` (`rounded-lg` cards, `rounded-md` controls). Prefer 
 
 ## Layout patterns
 
-- **Shell:** fixed/sticky dark sidebar + themed main canvas (paper light / deep teal dark)
+- **Login:** centered card before the shell — Username + Password (no placeholders); subtitle “Sign in with your username”. See [`specs/auth.md`](auth.md).
+- **Shell:** fixed/sticky dark sidebar + themed main canvas (paper light / deep teal dark); header shows signed-in display name + logout icon + theme icon
 - **Homepage:** quote hero (Fraunces) + illustrative visual panel + secondary quote cards + activity jump cards
 - **Activity pages:** collapsible Options panel (summary when closed). Grade + Difficulty share one row; type pills sit below when needed. Then a single problem card (prompt → answer → check/next)
 - **Coming soon:** simple card with subject context and return-home CTA

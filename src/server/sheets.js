@@ -86,6 +86,26 @@ export const getQuotes = () => {
     .filter((row) => row.id && row.quote && row.active);
 };
 
+/** Active playground users for username + PIN login. */
+export const getUsers = () => {
+  const sheet = getSpreadsheet().getSheetByName(SHEET_NAMES.users);
+  if (!sheet) {
+    return [];
+  }
+
+  const values = sheet.getDataRange().getValues();
+  return rowsToObjects(values)
+    .map((row) => ({
+      username: String(row.username ?? '')
+        .trim()
+        .toLowerCase(),
+      password: String(row.password ?? row.pin ?? '').trim(),
+      displayName: String(row.display_name ?? row.displayname ?? row.username ?? '').trim(),
+      active: isActive(row.active),
+    }))
+    .filter((row) => row.username && row.password && row.active);
+};
+
 export const getConfigMap = () => {
   const sheet = getSpreadsheet().getSheetByName(SHEET_NAMES.config);
   if (!sheet) {

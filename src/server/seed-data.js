@@ -159,6 +159,15 @@ export const CONFIG_SEED = [
   ['home_quote_count', 3],
 ];
 
+export const USER_HEADERS = ['username', 'password', 'display_name', 'active'];
+
+/** Example kid logins — change passwords in the Users sheet for real use (PIN is fine). */
+export const USER_SEED = [
+  ['maya', '1234', 'Maya', true],
+  ['leo', '2345', 'Leo', true],
+  ['sam', '3456', 'Sam', true],
+];
+
 export const QUOTE_HEADERS = ['id', 'quote', 'author', 'theme', 'active'];
 
 export const QUOTE_SEED = [

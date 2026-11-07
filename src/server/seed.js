@@ -4,6 +4,8 @@ import {
   CONFIG_SEED,
   QUOTE_HEADERS,
   QUOTE_SEED,
+  USER_HEADERS,
+  USER_SEED,
   WORD_PROBLEM_HEADERS,
   WORD_PROBLEM_SEED,
 } from './seed-data.js';
@@ -30,7 +32,7 @@ const sheetNeedsSeed = (spreadsheet, name) => {
 };
 
 /**
- * Creates WordProblems, Quotes, and Config tabs and loads seed data.
+ * Creates WordProblems, Quotes, Config, and Users tabs and loads seed data.
  * Safe to re-run; replaces sheet contents.
  */
 export const seedDatabase = () => {
@@ -38,12 +40,14 @@ export const seedDatabase = () => {
   writeSheet(spreadsheet, SHEET_NAMES.wordProblems, WORD_PROBLEM_HEADERS, WORD_PROBLEM_SEED);
   writeSheet(spreadsheet, SHEET_NAMES.quotes, QUOTE_HEADERS, QUOTE_SEED);
   writeSheet(spreadsheet, SHEET_NAMES.config, CONFIG_HEADERS, CONFIG_SEED);
+  writeSheet(spreadsheet, SHEET_NAMES.users, USER_HEADERS, USER_SEED);
 
   return {
     ok: true,
     wordProblems: WORD_PROBLEM_SEED.length,
     quotes: QUOTE_SEED.length,
     configRows: CONFIG_SEED.length,
+    users: USER_SEED.length,
   };
 };
 
@@ -99,6 +103,10 @@ export const ensureDatabase = () => {
   if (sheetNeedsSeed(spreadsheet, SHEET_NAMES.config)) {
     writeSheet(spreadsheet, SHEET_NAMES.config, CONFIG_HEADERS, CONFIG_SEED);
     seeded.push(SHEET_NAMES.config);
+  }
+  if (sheetNeedsSeed(spreadsheet, SHEET_NAMES.users)) {
+    writeSheet(spreadsheet, SHEET_NAMES.users, USER_HEADERS, USER_SEED);
+    seeded.push(SHEET_NAMES.users);
   }
 
   return {

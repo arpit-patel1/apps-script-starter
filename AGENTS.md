@@ -33,6 +33,7 @@ Tabs (auto-seeded when missing via `ensureDatabase()`):
 | `WordProblems` | Curated word problems: `id`, `grade`, `type`, `prompt`, `answer`, `answer_unit`, `difficulty`, `active` |
 | `Quotes` | Homepage quotes: `id`, `quote`, `author`, `theme`, `active` |
 | `Config` | Key/value settings (e.g. `mult_grade_3_min/max`, `home_quote_count`) |
+| `Users` | Login accounts: `username`, `password` (PIN ok), `display_name`, `active` |
 
 Word problem types: `operations`, `add_then_subtract`, `multiply_and_divide`, `time`, `money`, `measurement`.
 
@@ -43,7 +44,8 @@ Manual full reseed: run `seedDatabase` from the Apps Script editor, or use the S
 | Path | Role |
 | --- | --- |
 | `src/html/index.html` | Client UI (sidebar shell, homepage, practice screens) |
-| `src/server/api.js` | `getMeta`, `getHomeContent`, `getNextProblem`, `checkAnswer` |
+| `src/server/api.js` | `getMeta`, `getHomeContent`, `getNextProblem`, `checkAnswer` (token-gated) |
+| `src/server/auth.js` | Username + password `login` / `logout` / `getSession` |
 | `src/server/sheets.js` | Spreadsheet reads |
 | `src/server/problems.js` / `grading.js` | Problem generation + answer checking |
 | `src/server/geography.js` / `geography-data.js` | Geography quiz generation + static lists |
@@ -67,6 +69,7 @@ Product and design specs live in [`specs/`](specs/). Implement against those spe
 | Ops phase 3 | [`specs/operations-phase3.md`](specs/operations-phase3.md) |
 | Ops phase 4 | [`specs/operations-phase4.md`](specs/operations-phase4.md) |
 | Geography | [`specs/geography.md`](specs/geography.md) |
+| Auth | [`specs/auth.md`](specs/auth.md) |
 
 ## UI theme (required)
 
@@ -99,7 +102,7 @@ npx clasp deploy -i AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ
 
 Requires Apps Script API enabled for the Google account: https://script.google.com/home/usersettings
 
-Web app runs as `USER_DEPLOYING` with `ANYONE_ANONYMOUS` access (`appsscript.json`).
+Web app runs as `USER_DEPLOYING` with `ANYONE_ANONYMOUS` access (`appsscript.json`). App-level username + password login gates practice APIs (see [`specs/auth.md`](specs/auth.md)); Google Sites embed continues to work.
 
 ## Conventions for new activities
 
