@@ -4,6 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kids Homework Playground</title>
+    <script>
+      (function () {
+        try {
+          var pref = localStorage.getItem('kp-theme') || 'system';
+          var dark =
+            pref === 'dark' ||
+            (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        } catch (ignore) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,6 +25,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             fontFamily: {
@@ -115,17 +128,57 @@
         --sidebar-border: 160 20% 22%;
         --sidebar-accent: 162 40% 22%;
         --sidebar-accent-foreground: 48 40% 98%;
-      }
-
-      body {
-        background-image:
+        --skeleton-mid: 0 0% 100% / 0.7;
+        --page-wash:
           radial-gradient(ellipse 70% 45% at 90% -10%, hsl(44 80% 80% / 0.35), transparent),
           radial-gradient(ellipse 50% 35% at 100% 40%, hsl(162 40% 78% / 0.2), transparent),
           linear-gradient(180deg, hsl(48 33% 97%), hsl(150 20% 94%));
       }
 
+      .dark {
+        --background: 160 22% 8%;
+        --foreground: 48 22% 96%;
+        --card: 160 20% 12%;
+        --card-foreground: 48 22% 96%;
+        --primary: 162 52% 42%;
+        --primary-foreground: 160 30% 8%;
+        --secondary: 160 16% 16%;
+        --secondary-foreground: 48 20% 92%;
+        --muted: 160 14% 16%;
+        --muted-foreground: 150 10% 68%;
+        --accent: 28 88% 58%;
+        --accent-foreground: 24 40% 10%;
+        --destructive: 4 70% 56%;
+        --destructive-foreground: 0 0% 100%;
+        --success: 152 48% 42%;
+        --success-foreground: 0 0% 100%;
+        --border: 160 14% 22%;
+        --input: 160 14% 22%;
+        --ring: 162 52% 42%;
+        --sidebar: 160 28% 7%;
+        --sidebar-foreground: 48 28% 96%;
+        --sidebar-border: 160 18% 16%;
+        --sidebar-accent: 162 36% 18%;
+        --sidebar-accent-foreground: 48 40% 98%;
+        --skeleton-mid: 0 0% 100% / 0.08;
+        --page-wash:
+          radial-gradient(ellipse 70% 45% at 90% -10%, hsl(44 40% 28% / 0.18), transparent),
+          radial-gradient(ellipse 50% 35% at 100% 40%, hsl(162 35% 24% / 0.22), transparent),
+          linear-gradient(180deg, hsl(160 22% 8%), hsl(160 20% 10%));
+      }
+
+      body {
+        background-color: hsl(var(--background));
+        background-image: var(--page-wash);
+      }
+
       .skeleton {
-        background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(0 0% 100% / 0.7) 50%, hsl(var(--muted)) 75%);
+        background: linear-gradient(
+          90deg,
+          hsl(var(--muted)) 25%,
+          hsl(var(--skeleton-mid)) 50%,
+          hsl(var(--muted)) 75%
+        );
         background-size: 200% 100%;
         animation: shimmer 1.2s linear infinite;
       }
@@ -237,10 +290,6 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto px-3 py-4" id="side-nav" aria-label="Activities"></nav>
-
-        <div class="border-t border-sidebar-border px-4 py-4 text-xs text-sidebar-foreground/55">
-          Grades 3–5 · more subjects soon
-        </div>
       </aside>
 
       <!-- Main -->
@@ -257,10 +306,19 @@
               <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1">
             <p id="crumb" class="truncate text-sm text-muted-foreground">Home</p>
             <h1 id="page-title" class="font-display truncate text-xl font-semibold tracking-tight sm:text-2xl">Homepage</h1>
           </div>
+          <button
+            id="theme-toggle"
+            type="button"
+            class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background shadow-sm transition hover:bg-muted"
+            aria-label="Toggle color theme"
+            title="Toggle color theme"
+          >
+            <span id="theme-icon" class="inline-flex h-5 w-5 items-center justify-center" aria-hidden="true"></span>
+          </button>
         </header>
 
         <main id="app" class="flex-1 px-4 py-6 sm:px-6 lg:px-8"></main>
@@ -419,12 +477,24 @@
           },
         ];
 
+        var THEME_ORDER = ['light', 'dark', 'system'];
+        var THEME_ICONS = {
+          light:
+            '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+          dark:
+            '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z"/></svg>',
+          system:
+            '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>',
+        };
+        var THEME_LABELS = { light: 'Light', dark: 'Dark', system: 'Auto' };
+
         var state = {
           route: 'home',
           meta: null,
           problem: null,
           openGroups: { math: true, ela: false, geometry: false, geography: false },
           sidebarOpen: true,
+          theme: 'system',
         };
 
         var els = {
@@ -432,6 +502,8 @@
           overlay: document.getElementById('sidebar-overlay'),
           menuBtn: document.getElementById('menu-btn'),
           collapseBtn: document.getElementById('sidebar-collapse'),
+          themeToggle: document.getElementById('theme-toggle'),
+          themeIcon: document.getElementById('theme-icon'),
           sideNav: document.getElementById('side-nav'),
           app: document.getElementById('app'),
           crumb: document.getElementById('crumb'),
@@ -440,6 +512,41 @@
 
         function isMobileNav() {
           return window.matchMedia('(max-width: 767px)').matches;
+        }
+
+        function readStoredTheme() {
+          try {
+            var stored = localStorage.getItem('kp-theme');
+            if (THEME_ORDER.indexOf(stored) !== -1) return stored;
+          } catch (ignore) {}
+          return 'system';
+        }
+
+        function systemPrefersDark() {
+          return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+
+        function applyTheme(pref) {
+          state.theme = THEME_ORDER.indexOf(pref) !== -1 ? pref : 'system';
+          var dark = state.theme === 'dark' || (state.theme === 'system' && systemPrefersDark());
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          try {
+            localStorage.setItem('kp-theme', state.theme);
+          } catch (ignore) {}
+          if (els.themeIcon) els.themeIcon.innerHTML = THEME_ICONS[state.theme];
+          if (els.themeToggle) {
+            els.themeToggle.setAttribute(
+              'aria-label',
+              'Color theme: ' + THEME_LABELS[state.theme] + '. Click to change.',
+            );
+            els.themeToggle.title = 'Theme: ' + THEME_LABELS[state.theme];
+          }
+        }
+
+        function cycleTheme() {
+          var idx = THEME_ORDER.indexOf(state.theme);
+          applyTheme(THEME_ORDER[(idx + 1) % THEME_ORDER.length]);
         }
 
         function applySidebarState() {
@@ -610,14 +717,14 @@
             '<div class="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary/15 blur-2xl"></div>' +
             '<div class="pointer-events-none absolute bottom-0 left-8 h-28 w-28 rounded-full bg-accent/25 blur-xl"></div>' +
             '<svg class="relative mx-auto h-44 w-full max-w-sm" viewBox="0 0 360 180" fill="none" aria-hidden="true">' +
-            '<rect x="24" y="36" width="120" height="108" rx="14" fill="hsl(0 0% 100%)" stroke="hsl(150 16% 78%)" stroke-width="2"/>' +
-            '<path d="M40 62h88M40 82h72M40 102h80M40 122h56" stroke="hsl(162 40% 45%)" stroke-width="6" stroke-linecap="round"/>' +
-            '<circle cx="236" cy="70" r="42" fill="hsl(28 90% 55% / 0.2)" stroke="hsl(28 90% 45%)" stroke-width="2"/>' +
-            '<path d="M236 48v44M214 70h44" stroke="hsl(28 90% 40%)" stroke-width="5" stroke-linecap="round"/>' +
-            '<rect x="210" y="118" width="110" height="34" rx="10" fill="hsl(162 64% 28%)"/>' +
-            '<path d="M228 135h74" stroke="hsl(48 40% 98%)" stroke-width="5" stroke-linecap="round"/>' +
-            '<circle cx="300" cy="42" r="8" fill="hsl(162 55% 40%)"/>' +
-            '<circle cx="318" cy="58" r="5" fill="hsl(28 90% 55%)"/>' +
+            '<rect x="24" y="36" width="120" height="108" rx="14" fill="hsl(var(--card))" stroke="hsl(var(--border))" stroke-width="2"/>' +
+            '<path d="M40 62h88M40 82h72M40 102h80M40 122h56" stroke="hsl(var(--primary))" stroke-width="6" stroke-linecap="round"/>' +
+            '<circle cx="236" cy="70" r="42" fill="hsl(var(--accent) / 0.22)" stroke="hsl(var(--accent))" stroke-width="2"/>' +
+            '<path d="M236 48v44M214 70h44" stroke="hsl(var(--accent))" stroke-width="5" stroke-linecap="round"/>' +
+            '<rect x="210" y="118" width="110" height="34" rx="10" fill="hsl(var(--primary))"/>' +
+            '<path d="M228 135h74" stroke="hsl(var(--primary-foreground))" stroke-width="5" stroke-linecap="round"/>' +
+            '<circle cx="300" cy="42" r="8" fill="hsl(var(--primary))"/>' +
+            '<circle cx="318" cy="58" r="5" fill="hsl(var(--accent))"/>' +
             '</svg>' +
             "<p class=\"relative mt-2 text-center text-sm font-medium text-muted-foreground\">Notebook ready. Brain curious. Let's practice.</p>" +
             '</div>'
@@ -1679,8 +1786,14 @@
         if (els.collapseBtn) els.collapseBtn.addEventListener('click', function () {
           setSidebarOpen(false);
         });
+        if (els.themeToggle) els.themeToggle.addEventListener('click', cycleTheme);
         els.overlay.addEventListener('click', closeMobileNav);
         window.addEventListener('resize', applySidebarState);
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+          if (state.theme === 'system') applyTheme('system');
+        });
+
+        applyTheme(readStoredTheme());
 
         try {
           var stored = localStorage.getItem('kp-sidebar-open');
