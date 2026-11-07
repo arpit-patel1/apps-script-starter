@@ -22,6 +22,7 @@ import {
   generateInputOutput,
   generateOrderOfOperations,
 } from './phase4.js';
+import { generateGeography } from './geography.js';
 import { generatePlaceValue } from './place-value.js';
 import { generateSubtraction } from './subtraction.js';
 import { getWordProblems } from './sheets.js';
@@ -234,13 +235,23 @@ export const createOrderOfOperationsProblem = ({ grade, difficulty } = {}) =>
 export const createInputOutputProblem = ({ grade, type, difficulty } = {}) =>
   createTextProblem({ mode: 'input_output', grade, type, difficulty, generate: generateInputOutput });
 
+export const createGeographyProblem = ({ grade, type, difficulty } = {}) =>
+  createTextProblem({ mode: 'geography', grade, type, difficulty, generate: generateGeography });
+
 export { formatCents };
 
-export const createWordProblem = ({ grade, type, excludeId } = {}) => {
-  let candidates = getWordProblems().filter((problem) => problem.grade === Number(grade));
+export const createWordProblem = ({ grade, type, difficulty, excludeId } = {}) => {
+  const level = String(difficulty || 'medium').toLowerCase();
+  let pool = getWordProblems().filter((problem) => problem.grade === Number(grade));
 
   if (type) {
-    candidates = candidates.filter((problem) => problem.type === type);
+    pool = pool.filter((problem) => problem.type === type);
+  }
+
+  // Prefer exact difficulty; fall back to same grade/type if that bucket is empty.
+  let candidates = pool.filter((problem) => problem.difficulty === level);
+  if (candidates.length === 0) {
+    candidates = pool;
   }
 
   if (excludeId) {
@@ -252,7 +263,9 @@ export const createWordProblem = ({ grade, type, excludeId } = {}) => {
 
   if (candidates.length === 0) {
     throw new Error(
-      `No active word problems found for grade ${grade}${type ? ` and type ${type}` : ''}.`,
+      `No active word problems found for grade ${grade}${type ? ` and type ${type}` : ''}${
+        level ? ` (${level})` : ''
+      }.`,
     );
   }
 
@@ -264,6 +277,7 @@ export const createWordProblem = ({ grade, type, excludeId } = {}) => {
     mode: 'word',
     grade: problem.grade,
     type: problem.type,
+    difficulty: problem.difficulty || level,
     prompt: problem.prompt,
     hint: problem.answerUnit || null,
   };

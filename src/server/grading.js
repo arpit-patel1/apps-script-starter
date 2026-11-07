@@ -4,6 +4,7 @@ import {
   normalizeListAnswer,
 } from './phase2.js';
 import { normalizeTimeAnswer, parseMoneyToCents } from './phase3.js';
+import { normalizeGeoAnswer } from './geography.js';
 import { normalizeFractionAnswer, normalizeIoRule } from './phase4.js';
 import { normalizeExpandedAnswer } from './place-value.js';
 
@@ -83,6 +84,10 @@ export const normalizeAnswer = (value, options = {}) => {
     return normalizeIoRule(value);
   }
 
+  if (options.kind === 'geo' || options.kind === 'geo_list') {
+    return normalizeGeoAnswer(value);
+  }
+
   let text = String(value).trim().toLowerCase();
   text = text.replace(/[$,]/g, '');
   text = text.replace(/\s+/g, ' ');
@@ -130,6 +135,11 @@ export const answersMatch = (userAnswer, correctAnswer, options = {}) => {
     const userCents = parseMoneyToCents(userAnswer);
     const expected = Number(correctAnswer);
     return userCents !== null && Number.isFinite(expected) && userCents === expected;
+  }
+
+  if (kind === 'geo_list' && Array.isArray(options.accepted)) {
+    const got = normalizeGeoAnswer(userAnswer);
+    return options.accepted.some((item) => normalizeGeoAnswer(item) === got);
   }
 
   return normalizeAnswer(userAnswer, options) === normalizeAnswer(correctAnswer, options);

@@ -409,8 +409,12 @@
             type: 'group',
             open: false,
             children: [
-              { id: 'geog-maps', label: 'Maps', route: 'geography/maps', ready: false },
-              { id: 'geog-places', label: 'Places', route: 'geography/places', ready: false },
+              {
+                id: 'geog-quiz',
+                label: 'Capitals & continents',
+                route: 'geography/quiz',
+                ready: true,
+              },
             ],
           },
         ];
@@ -706,6 +710,13 @@
             cardLink('Math', 'Order of operations', 'math/order-of-operations', 'PEMDAS expressions.', true) +
             cardLink('Math', 'Input/output', 'math/input-output', 'Tables: fill blanks or find the rule.', true) +
             cardLink('Math', 'Word problems', 'math/word-problems', 'Story problems by type.', true) +
+            cardLink(
+              'Geography',
+              'Capitals & continents',
+              'geography/quiz',
+              'US, world, India capitals; continents.',
+              true,
+            ) +
             cardLink('ELA', 'Reading', 'ela/reading', 'Passages coming soon.', false) +
             '</div></section></div>'
           );
@@ -1010,6 +1021,13 @@
             return {
               label: 'Missing values',
               placeholder: 'e.g. 12, 8',
+              inputMode: 'text',
+            };
+          }
+          if (mode === 'geography') {
+            return {
+              label: 'Your answer',
+              placeholder: 'Place name or abbreviation',
               inputMode: 'text',
             };
           }
@@ -1323,6 +1341,7 @@
             if (mode === 'time') typeOptions = meta.timeTypes || [];
             if (mode === 'fractions') typeOptions = meta.fractionTypes || [];
             if (mode === 'input_output') typeOptions = meta.inputOutputTypes || [];
+            if (mode === 'geography') typeOptions = meta.geographyTypes || [];
             selectedType = typePills && typeOptions.length ? typeOptions[0].id : null;
             applyAnswerHints(selectedType);
             refreshPills();
@@ -1637,6 +1656,19 @@
               inputMode: 'decimal',
             });
             wirePractice('word');
+            return;
+          }
+
+          if (state.route === 'geography/quiz') {
+            els.app.innerHTML = practiceShell({
+              showType: true,
+              typeLabel: 'Quiz type',
+              badge: 'Geography',
+              answerLabel: 'Your answer',
+              answerPlaceholder: 'Place name or abbreviation',
+              inputMode: 'text',
+            });
+            wirePractice('geography');
             return;
           }
 

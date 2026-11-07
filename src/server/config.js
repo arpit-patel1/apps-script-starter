@@ -88,4 +88,6 @@ export {
   INPUT_OUTPUT_TYPES,
 } from './phase4.js';
 
+export { GEOGRAPHY_TYPES } from './geography.js';
+
 export const PROBLEM_CACHE_SECONDS = 30 * 60;

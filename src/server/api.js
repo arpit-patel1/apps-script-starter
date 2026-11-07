@@ -3,6 +3,7 @@ import {
   DIVISION_TYPES,
   FACTORS_TYPES,
   FRACTION_TYPES,
+  GEOGRAPHY_TYPES,
   GRADES,
   INPUT_OUTPUT_TYPES,
   MEASUREMENT_TYPES,
@@ -22,6 +23,7 @@ import {
   createEstimateProblem,
   createFactorsProblem,
   createFractionsProblem,
+  createGeographyProblem,
   createInputOutputProblem,
   createMeasurementProblem,
   createMissingSymbolProblem,
@@ -79,6 +81,7 @@ export const getMeta = () => {
       { id: 'order_of_operations', label: 'Order of operations' },
       { id: 'input_output', label: 'Input/output' },
       { id: 'word', label: 'Word problem' },
+      { id: 'geography', label: 'Geography' },
     ],
     types: WORD_PROBLEM_TYPES,
     multiplicationTypes: MULTIPLICATION_TYPES,
@@ -92,6 +95,7 @@ export const getMeta = () => {
     timeTypes: TIME_TYPES,
     fractionTypes: FRACTION_TYPES,
     inputOutputTypes: INPUT_OUTPUT_TYPES,
+    geographyTypes: GEOGRAPHY_TYPES,
   };
 };
 
@@ -176,7 +180,10 @@ export const getNextProblem = (options = {}) => {
     return createInputOutputProblem({ grade, type, difficulty, excludeId });
   }
   if (mode === 'word') {
-    return createWordProblem({ grade, type, excludeId });
+    return createWordProblem({ grade, type, difficulty, excludeId });
+  }
+  if (mode === 'geography') {
+    return createGeographyProblem({ grade, type, difficulty, excludeId });
   }
 
   throw new Error(`Unsupported mode: ${mode}`);
@@ -216,6 +223,8 @@ export const checkAnswer = (options = {}) => {
     reveal = `any number from ${extra.range.min} to ${extra.range.max}`;
   } else if (answerKind === 'accepted_list' && Array.isArray(extra.accepted)) {
     reveal = extra.accepted.join(' or ');
+  } else if (answerKind === 'geo_list' && Array.isArray(extra.accepted)) {
+    reveal = extra.accepted.slice(0, 6).join(', ') + (extra.accepted.length > 6 ? ', …' : '');
   } else if (answerKind === 'money' && Number.isFinite(Number(correctAnswer))) {
     reveal = formatCents(Number(correctAnswer));
   }

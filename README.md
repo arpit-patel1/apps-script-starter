@@ -9,7 +9,7 @@ Grade 3–5 homework practice web app built on the [apps-script-starter](https:/
 | Agent notes | [`AGENTS.md`](AGENTS.md) |
 | Specs | [`specs/`](specs/) |
 
-Live Math activities: Addition, Subtraction, Multiplication, Division, Place value, Rounding, Factors & multiples, Missing symbol, Estimate, Times as many, Money (count/change/compare), Measurement, Time, Fractions, Order of operations, Input/output, Word problems.
+Live activities: Math (Addition through Word problems) plus Geography (US/world/India capitals, abbreviations, continents).
 
 ```bash
 npm install

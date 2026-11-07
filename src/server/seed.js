@@ -47,6 +47,37 @@ export const seedDatabase = () => {
   };
 };
 
+/** Append seed word problems whose ids are not already in the Sheet. */
+export const mergeWordProblemSeed = () => {
+  const spreadsheet = getSpreadsheet();
+  let sheet = spreadsheet.getSheetByName(SHEET_NAMES.wordProblems);
+
+  if (!sheet || sheet.getLastRow() < 2) {
+    writeSheet(spreadsheet, SHEET_NAMES.wordProblems, WORD_PROBLEM_HEADERS, WORD_PROBLEM_SEED);
+    return { created: true, added: WORD_PROBLEM_SEED.length };
+  }
+
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0].map((header) => String(header).trim().toLowerCase());
+  const idIndex = headers.indexOf('id');
+  const existingIds = new Set(
+    values
+      .slice(1)
+      .map((row) => String(idIndex >= 0 ? row[idIndex] : '').trim())
+      .filter(Boolean),
+  );
+
+  const missing = WORD_PROBLEM_SEED.filter((row) => !existingIds.has(String(row[0])));
+  if (missing.length === 0) {
+    return { created: false, added: 0 };
+  }
+
+  sheet
+    .getRange(sheet.getLastRow() + 1, 1, missing.length, WORD_PROBLEM_HEADERS.length)
+    .setValues(missing);
+  return { created: false, added: missing.length };
+};
+
 /** Seed any missing/empty tabs without wiping existing filled sheets. */
 export const ensureDatabase = () => {
   const spreadsheet = getSpreadsheet();
@@ -55,6 +86,11 @@ export const ensureDatabase = () => {
   if (sheetNeedsSeed(spreadsheet, SHEET_NAMES.wordProblems)) {
     writeSheet(spreadsheet, SHEET_NAMES.wordProblems, WORD_PROBLEM_HEADERS, WORD_PROBLEM_SEED);
     seeded.push(SHEET_NAMES.wordProblems);
+  } else {
+    const merged = mergeWordProblemSeed();
+    if (merged.added > 0) {
+      seeded.push(`${SHEET_NAMES.wordProblems}+${merged.added}`);
+    }
   }
   if (sheetNeedsSeed(spreadsheet, SHEET_NAMES.quotes)) {
     writeSheet(spreadsheet, SHEET_NAMES.quotes, QUOTE_HEADERS, QUOTE_SEED);
