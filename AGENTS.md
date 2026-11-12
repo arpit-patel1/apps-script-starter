@@ -44,7 +44,12 @@ Manual full reseed: run `seedDatabase` from the Apps Script editor, or use the S
 
 | Path | Role |
 | --- | --- |
-| `src/html/index.html` | Client UI (sidebar shell, homepage, practice screens) |
+| `src/client/` | React + TypeScript SPA (Tailwind, shadcn/ui, hash router) |
+| `src/client/lib/gas.ts` | Promise RPC adapter (`google.script.run` + local mock) |
+| `src/client/lib/nav.ts` | Sidebar NAV + practice mode configs |
+| `src/client/components/ui/` | shadcn primitives (Button, Card, Input, …) |
+| `src/client/components/shell/` | App shell, sidebar, theme toggle |
+| `src/client/components/practice/` | Shared PracticeShell + algorithm visuals |
 | `src/server/api.js` | `getMeta`, `getHomeContent`, `getNextProblem`, `checkAnswer` (token-gated) |
 | `src/server/auth.js` | Username + password `login` / `logout` / `getSession` |
 | `src/server/sheets.js` | Spreadsheet reads |
@@ -54,6 +59,8 @@ Manual full reseed: run `seedDatabase` from the Apps Script editor, or use the S
 | `src/server/seed.js` / `seed-data.js` | Schema seed content |
 | `src/server/webapp.js` | `doGet` HtmlService entry |
 | `src/index.js` | Exports for clasp / Vite GAS bridge |
+| `vite.config.client.ts` | Client SPA build → single-file `dist/index.html` |
+| `vite.config.server.js` | Server IIFE build → `dist/code.js` + `appsscript.json` |
 
 Answers are never sent to the client until after a failed check (or recalled from `CacheService` for multiplication).
 
@@ -82,7 +89,7 @@ Locked choices kids already like:
 
 - Fraunces (display) + Source Sans 3 (UI)
 - Teal primary / warm paper background / orange accent
-- Dark sidebar, shadcn-style cards/buttons/inputs
+- Dark sidebar, real shadcn/ui components + theme tokens
 - Light motion only (`fade-up`, `pop-in`, skeletons)
 
 Do not replace this palette/typography without an explicit product decision.
@@ -91,9 +98,10 @@ Do not replace this palette/typography without an explicit product decision.
 
 ```bash
 npm install
-npm run dev      # watch build
+npm run dev         # Vite client preview with mock google.script.run
+npm run build       # client single-file SPA + server code.js → dist/
 npm test
-npm run deploy   # vite build + clasp push
+npm run deploy      # build + clasp push
 ```
 
 After push, create/update a web app deployment (existing deployment id above):
@@ -111,8 +119,9 @@ Modal drills need Script properties `MODAL_BASE_URL` and `MODAL_API_KEY` (see [`
 
 ## Conventions for new activities
 
-1. Add a sidebar group/child in `src/html/index.html` `NAV` (mark `ready: true` only when playable).
+1. Add a sidebar group/child in `src/client/lib/nav.ts` `NAV` (mark `ready: true` only when playable) and a `PRACTICE_BY_ROUTE` entry when live.
 2. Prefer Sheet-backed content for curated items; generation is OK for drills (like multiplication).
-3. Reuse practice shell patterns and theme tokens from `specs/ui-theme.md`.
+3. Reuse `PracticeShell` + shadcn primitives and theme tokens from `specs/ui-theme.md`.
 4. Extend server APIs in `src/server/` and export from `src/index.js`.
 5. Keep homepage quote-forward; don’t turn Home into a dense dashboard.
+6. Client routing is hash-based (`#/home`, `#/math/multiplication`) for HtmlService / Sites embeds.

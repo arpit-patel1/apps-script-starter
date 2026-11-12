@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 48 33% 97%;
+  --foreground: 160 30% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 160 30% 12%;
+  --primary: 162 64% 28%;
+  --primary-foreground: 48 40% 98%;
+  --secondary: 44 55% 92%;
+  --secondary-foreground: 160 25% 18%;
+  --muted: 150 18% 93%;
+  --muted-foreground: 160 10% 40%;
+  --accent: 28 90% 55%;
+  --accent-foreground: 24 60% 12%;
+  --destructive: 4 72% 48%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 152 55% 32%;
+  --success-foreground: 0 0% 100%;
+  --border: 150 16% 84%;
+  --input: 150 16% 84%;
+  --ring: 162 64% 28%;
+  --radius: 0.75rem;
+  --sidebar: 160 28% 14%;
+  --sidebar-foreground: 48 30% 96%;
+  --sidebar-border: 160 20% 22%;
+  --sidebar-accent: 162 40% 22%;
+  --sidebar-accent-foreground: 48 40% 98%;
+  --skeleton-mid: 0 0% 100% / 0.7;
+  --page-wash:
+    radial-gradient(ellipse 70% 45% at 90% -10%, hsl(44 80% 80% / 0.35), transparent),
+    radial-gradient(ellipse 50% 35% at 100% 40%, hsl(162 40% 78% / 0.2), transparent),
+    linear-gradient(180deg, hsl(48 33% 97%), hsl(150 20% 94%));
+}
+
+.dark {
+  --background: 160 22% 8%;
+  --foreground: 48 22% 96%;
+  --card: 160 20% 12%;
+  --card-foreground: 48 22% 96%;
+  --primary: 162 52% 42%;
+  --primary-foreground: 160 30% 8%;
+  --secondary: 160 16% 16%;
+  --secondary-foreground: 48 20% 92%;
+  --muted: 160 14% 16%;
+  --muted-foreground: 150 10% 68%;
+  --accent: 28 88% 58%;
+  --accent-foreground: 24 40% 10%;
+  --destructive: 4 70% 56%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 152 48% 42%;
+  --success-foreground: 0 0% 100%;
+  --border: 160 14% 22%;
+  --input: 160 14% 22%;
+  --ring: 162 52% 42%;
+  --sidebar: 160 28% 7%;
+  --sidebar-foreground: 48 28% 96%;
+  --sidebar-border: 160 18% 16%;
+  --sidebar-accent: 162 36% 18%;
+  --sidebar-accent-foreground: 48 40% 98%;
+  --skeleton-mid: 0 0% 100% / 0.08;
+  --page-wash:
+    radial-gradient(ellipse 70% 45% at 90% -10%, hsl(44 40% 28% / 0.18), transparent),
+    radial-gradient(ellipse 50% 35% at 100% 40%, hsl(162 35% 24% / 0.22), transparent),
+    linear-gradient(180deg, hsl(160 22% 8%), hsl(160 20% 10%));
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    background-image: var(--page-wash);
+    @apply text-foreground;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--skeleton-mid)) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+.nav-link.active {
+  background: hsl(var(--sidebar-accent));
+  color: hsl(var(--sidebar-accent-foreground));
+}
+
+.nav-sublink.active {
+  background: hsl(162 45% 28%);
+  color: hsl(48 40% 98%);
+}
+
+.algorithm-board {
+  width: fit-content;
+  margin-inline: auto;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, monospace;
+}
+
+.algorithm-board .alg-row {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(4.5rem, auto);
+  column-gap: 0.35rem;
+  align-items: baseline;
+  font-size: clamp(1.75rem, 5vw, 2.35rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+}
+
+.algorithm-board .alg-op {
+  text-align: left;
+  color: hsl(var(--primary));
+}
+
+.algorithm-board .alg-num {
+  text-align: right;
+}
+
+.algorithm-board .alg-rule {
+  margin-top: 0.35rem;
+  margin-bottom: 0.15rem;
+  border-top: 3px solid hsl(var(--foreground));
+  grid-column: 1 / -1;
+}
+
+.long-division-board {
+  width: fit-content;
+  margin-inline: auto;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, monospace;
+}
+
+.long-division-board .ld-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.long-division-board .ld-divisor {
+  display: flex;
+  align-items: center;
+  color: hsl(var(--primary));
+}
+
+.long-division-board .ld-box {
+  border-left: 3px solid hsl(var(--foreground));
+  border-top: 3px solid hsl(var(--foreground));
+  padding: 0.15rem 0.55rem 0.35rem;
+  min-width: 4.5rem;
+  text-align: right;
+}

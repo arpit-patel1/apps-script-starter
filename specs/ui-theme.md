@@ -1,6 +1,13 @@
 # Kids Homework Playground — UI theme spec
 
-Use this spec for all playground UI work in `src/html/`. Keep the current look: warm paper workspace, deep teal primary, Fraunces display type.
+Use this spec for all playground UI work in `src/client/`. Keep the current look: warm paper workspace, deep teal primary, Fraunces display type.
+
+## Stack
+
+- **React + TypeScript** SPA under `src/client/`
+- **Tailwind CSS** (built, not CDN) with CSS variables mirrored as theme tokens
+- **shadcn/ui** primitives in `src/client/components/ui/` (Button, Card, Input, Badge, Label, Alert, …)
+- **Hash router** (`react-router-dom` `HashRouter`) for Apps Script HtmlService / Sites embeds
 
 ## Brand tone
 
@@ -56,16 +63,21 @@ Radius: `--radius: 0.75rem` (`rounded-lg` cards, `rounded-md` controls). Prefer 
 - **Activity pages:** collapsible Options panel (summary when closed). Grade + Difficulty share one row; type pills sit below when needed. Then a single problem card (prompt → answer → check/next)
 - **Coming soon:** simple card with subject context and return-home CTA
 
-## Components (shadcn-style)
+## Components (shadcn/ui)
 
-Match shadcn structure with Tailwind utility classes:
+Use real shadcn components from `src/client/components/ui/` with the theme tokens:
 
-- Button primary: `bg-primary text-primary-foreground`
-- Button outline: `border border-input bg-background hover:bg-muted`
-- Card: `rounded-lg border border-border bg-card shadow-sm`
-- Input / select: `h-11`/`h-12`, `rounded-md`, `border-input`, focus ring via `--ring`
+- Button primary: `variant="default"` → `bg-primary text-primary-foreground`
+- Button outline: `variant="outline"` → `border border-input bg-background hover:bg-muted`
+- Card / CardHeader / CardContent / CardFooter: problem + options panels
+- Input: `h-12`, `rounded-md`, `border-input`, focus ring via `--ring`
 - Badge: compact `rounded-md` label, not full pill chrome
+- ToggleGroup / ToggleGroupItem: grade, difficulty, and type selectors (rounded-md, not pills)
+- Collapsible + Separator: Options panel
+- Skeleton: problem loading placeholders
 - Feedback alerts: tinted success / destructive borders and backgrounds
+
+All math activities share `PracticeShell`, so these components apply across every live math drill.
 
 ## Motion
 
@@ -89,7 +101,7 @@ Keep motion light and intentional:
 - Use Fraunces for emotional/display moments (quotes, prompts)
 - Keep sidebar dark teal in both themes; content area uses theme tokens
 - Prefer token colors (`bg-card`, `text-muted-foreground`, `hsl(var(--primary))`) over hard-coded light HSL
-- Add new subjects with the same card + nav patterns
+- Add new subjects with the same card + nav patterns in `src/client/lib/nav.ts`
 
 **Don’t**
 
@@ -97,3 +109,4 @@ Keep motion light and intentional:
 - Switch to Inter / system-ui as the primary UI font
 - Overload the homepage with dense dashboards or stats strips
 - Hard-code light-only fills that break in `.dark`
+- Use path-based History API routing (HtmlService needs hash routes)

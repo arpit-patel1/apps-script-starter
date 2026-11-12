@@ -23,4 +23,4 @@ Generated drills for grades 3–5, ported from `network-element-ai` money / meas
 ## Implementation
 
 - Generators: `src/server/phase3.js`
-- Wired via `problems.js` → `api.js` → practice shell in `src/html/index.html`
+- Wired via `problems.js` → `api.js` → React `PracticeShell` in `src/client/`

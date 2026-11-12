@@ -118,7 +118,7 @@ This command will watch for changes in your source files and automatically rebui
 The main source code for your application is located in the `src` directory.
 
 - `src/index.js`: The main entry point for your application.
-- `src/html/`: Contains the HTML files for your user interface.
+- `src/client/`: React + TypeScript SPA (Tailwind, shadcn/ui) built to a single-file `dist/index.html`.
 - `src/server/`: Contains the server-side code for your application.
 
 ### Writing Code

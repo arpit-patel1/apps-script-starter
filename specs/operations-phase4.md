@@ -21,4 +21,4 @@ Generated drills for grades 3–5.
 ## Implementation
 
 - Generators: `src/server/phase4.js`
-- Wired via `problems.js` → `api.js` → practice shell in `src/html/index.html`
+- Wired via `problems.js` → `api.js` → React `PracticeShell` in `src/client/`
