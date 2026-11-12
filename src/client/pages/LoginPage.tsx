@@ -1,5 +1,4 @@
 import { FormEvent, useState } from 'react';
-import { PlaygroundMark } from '@/components/shell/PlaygroundLogo';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,12 +30,9 @@ export function LoginPage() {
     <div className="min-h-screen px-4 py-10 sm:px-6">
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-md flex-col justify-center">
         <Card className="animate-fade-up p-6 sm:p-8">
-          <div className="mb-6 flex items-center gap-3">
-            <PlaygroundMark className="h-11 w-11" />
-            <div>
-              <p className="font-display text-2xl font-semibold tracking-tight">Playground</p>
-              <p className="text-sm text-muted-foreground">Sign in with your username</p>
-            </div>
+          <div className="mb-6">
+            <p className="font-display text-2xl font-semibold tracking-tight">Playground</p>
+            <p className="text-sm text-muted-foreground">Sign in with your username</p>
           </div>
           <form className="space-y-4" onSubmit={(e) => void onSubmit(e)}>
             <div className="space-y-2">

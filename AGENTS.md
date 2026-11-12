@@ -22,13 +22,6 @@ This repo is the **Kids Homework Playground**: a Google Apps Script web app for 
 | Web app deployment | `AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ1uhd8B3-RjHH` |
 | Web app URL | https://script.google.com/macros/s/AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ1uhd8B3-RjHH/exec |
 | Google Sites | https://sites.google.com/view/k2-playground-1/playground |
-| iPhone home-screen URL | https://arpit-patel1.github.io/apps-script-starter/app.html |
-
-**iPhone Add to Home Screen:** Do **not** add the raw `script.google.com/.../exec` URL or the Google Sites page — those run in iframes, so iOS ignores in-page icons and shows a gray tile. Open the GitHub Pages splash in Safari:
-
-https://arpit-patel1.github.io/apps-script-starter/app.html
-
-Then Share → Add to Home Screen (you should see the teal notebook icon in the preview). Delete any old gray shortcut first. Opening the new home-screen icon jumps into the live Apps Script app. For Google Sites favicon only, upload `icons/apple-touch-icon.png` as the site branding image (that does not fix iOS home-screen icons).
 
 Spreadsheet ID is also in `src/server/config.js`. Clasp `scriptId` is in `.clasp.json`.
 

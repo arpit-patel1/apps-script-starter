@@ -94,7 +94,7 @@ export function AppShell() {
             </Button>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm text-muted-foreground">{info.crumb}</p>
-              <h1 className="text-shine font-display truncate text-xl font-semibold tracking-tight sm:text-2xl">
+              <h1 className="font-display truncate text-xl font-semibold tracking-tight sm:text-2xl">
                 {info.title}
               </h1>
             </div>

@@ -1,6 +1,5 @@
 import { ChevronDown, PanelLeftClose } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PlaygroundLogo } from '@/components/shell/PlaygroundLogo';
 import { NAV } from '@/lib/nav';
 import { cn } from '@/lib/utils';
 
@@ -32,7 +31,11 @@ export function Sidebar({
     >
       {/* Taller brand block; no bottom border so it does not line up with main header */}
       <div className="flex items-start gap-2 px-4 pb-5 pt-5">
-        <PlaygroundLogo className="min-w-0 flex-1" />
+        <div className="min-w-0 flex-1">
+          <p className="text-shine-sidebar truncate font-display text-lg font-semibold leading-none tracking-tight">
+            Playground
+          </p>
+        </div>
         <button
           type="button"
           className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"

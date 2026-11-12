@@ -61,7 +61,7 @@ Radius: `--radius: 0.75rem` (`rounded-lg` cards, `rounded-md` controls). Prefer 
 ## Layout patterns
 
 - **Login:** centered card before the shell — Username + Password (no placeholders); subtitle “Sign in with your username”. See [`specs/auth.md`](auth.md).
-- **Shell:** fixed/sticky dark sidebar + themed main canvas (paper light / deep teal dark). Sidebar brand is a taller logo block (notebook mark + “Playground” wordmark) with a separator that does **not** share a continuous border with the main header. Main header shows theme toggle + circular avatar (first two letters of display name); clicking the avatar signs out.
+- **Shell:** fixed/sticky dark sidebar + themed main canvas (paper light / deep teal dark). Sidebar brand is a taller “Playground” wordmark with a separator that does **not** share a continuous border with the main header. Main header shows theme toggle + circular avatar (first two letters of display name); clicking the avatar signs out.
 - **Homepage:** quote hero (Geist + `.text-shine`) + illustrative visual panel + secondary quote cards + activity jump cards
 - **Activity pages:** collapsible Options panel (summary when closed). Grade + Difficulty share one row; type pills sit below when needed. Then a single problem card (prompt → answer → check/next)
 - **Coming soon:** simple card with subject context and return-home CTA
