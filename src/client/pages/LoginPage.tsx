@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { PlaygroundMark } from '@/components/shell/PlaygroundLogo';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,11 +32,9 @@ export function LoginPage() {
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-md flex-col justify-center">
         <Card className="animate-fade-up p-6 sm:p-8">
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accent font-display text-sm font-bold text-accent-foreground">
-              KP
-            </div>
+            <PlaygroundMark className="h-11 w-11" />
             <div>
-              <p className="font-display text-2xl font-semibold tracking-tight">Kids Playground</p>
+              <p className="font-display text-2xl font-semibold tracking-tight">Playground</p>
               <p className="text-sm text-muted-foreground">Sign in with your username</p>
             </div>
           </div>
