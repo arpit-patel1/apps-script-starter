@@ -3,24 +3,25 @@
   "short_name": "Playground",
   "description": "Grades 3–5 homework practice",
   "start_url": "./app.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0f1c18",
   "theme_color": "#1F6B56",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "https://arpit-patel1.github.io/apps-script-starter/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "https://arpit-patel1.github.io/apps-script-starter/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "apple-touch-icon.png",
+      "src": "https://arpit-patel1.github.io/apps-script-starter/apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
