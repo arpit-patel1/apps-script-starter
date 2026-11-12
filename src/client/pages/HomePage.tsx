@@ -84,7 +84,7 @@ export function HomePage() {
             Today's spark
           </p>
           <blockquote className="relative mt-4">
-            <p className="font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+            <p className="text-shine font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
               “{featured?.quote || 'Small steps every day still take you somewhere new.'}”
             </p>
             <footer className="mt-5 text-sm font-medium text-muted-foreground">

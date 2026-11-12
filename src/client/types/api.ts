@@ -67,9 +67,11 @@ export interface Problem {
   type?: string;
   prompt: string;
   hint?: string;
-  display?: 'standard_algorithm' | 'long_division' | string;
+  display?: 'standard_algorithm' | 'long_division' | 'multiple_choice' | string;
   layout?: ProblemLayout;
   answerKind?: string;
+  /** Multiple-choice options (e.g. science quiz A–D). */
+  choices?: string[];
 }
 
 export interface CheckResult {

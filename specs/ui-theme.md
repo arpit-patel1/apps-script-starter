@@ -1,6 +1,6 @@
 # Kids Homework Playground — UI theme spec
 
-Use this spec for all playground UI work in `src/client/`. Keep the current look: warm paper workspace, deep teal primary, Fraunces display type.
+Use this spec for all playground UI work in `src/client/`. Keep the current look: warm paper workspace, deep teal primary, Geist type.
 
 ## Stack
 
@@ -15,19 +15,22 @@ Use this spec for all playground UI work in `src/client/`. Keep the current look
 - Light and dark themes via `html.dark` + shared CSS tokens (same teal / warm accent brand)
 - Default preference: **system** (`kp-theme` in `localStorage`: `light` | `dark` | `system`)
 - Header icon control cycles Light → Dark → Auto (tooltip shows current mode)
-- Avoid purple gradients, neon glows, emoji decoration, and generic Inter/Roboto stacks
+- Avoid purple gradients, neon glows, emoji decoration, and generic Inter/Roboto stacks (Geist is the intentional brand face)
 
 ## Typography
 
 | Role | Font | Notes |
 | --- | --- | --- |
-| Display | **Fraunces** | Headlines, quotes, problem prompts |
-| Body / UI | **Source Sans 3** | Nav, labels, buttons, helper text |
+| Display / UI | **Geist** | Headlines, quotes, prompts, nav, controls (Vercel font) |
+| Mono | **Geist Mono** | Algorithm / long-division boards |
 
 Tailwind tokens:
 
-- `font-display` → Fraunces
-- `font-sans` → Source Sans 3
+- `font-display` → Geist
+- `font-sans` → Geist
+- `font-mono` → Geist Mono
+
+Homepage featured quote and activity question copy use `.text-shine`. Key numbers in prompts and algorithm boards use `.text-shine-accent`. Primary action labels (Check / Next / primary Reveal) use `.text-shine-on-primary`. Keep shine off dense chrome (nav, inputs, badges).
 
 ## Color tokens (HSL)
 
@@ -58,8 +61,8 @@ Radius: `--radius: 0.75rem` (`rounded-lg` cards, `rounded-md` controls). Prefer 
 ## Layout patterns
 
 - **Login:** centered card before the shell — Username + Password (no placeholders); subtitle “Sign in with your username”. See [`specs/auth.md`](auth.md).
-- **Shell:** fixed/sticky dark sidebar + themed main canvas (paper light / deep teal dark); header shows signed-in display name + logout icon + theme icon
-- **Homepage:** quote hero (Fraunces) + illustrative visual panel + secondary quote cards + activity jump cards
+- **Shell:** fixed/sticky dark sidebar + themed main canvas (paper light / deep teal dark). Sidebar brand is a taller logo block (notebook mark + “Playground” wordmark) with a separator that does **not** share a continuous border with the main header. Main header shows theme toggle + circular avatar (first two letters of display name); clicking the avatar signs out.
+- **Homepage:** quote hero (Geist + `.text-shine`) + illustrative visual panel + secondary quote cards + activity jump cards
 - **Activity pages:** collapsible Options panel (summary when closed). Grade + Difficulty share one row; type pills sit below when needed. Then a single problem card (prompt → answer → check/next)
 - **Coming soon:** simple card with subject context and return-home CTA
 
@@ -98,15 +101,17 @@ Keep motion light and intentional:
 
 **Do**
 
-- Use Fraunces for emotional/display moments (quotes, prompts)
+- Use Geist for UI and display; Geist Mono for algorithm boards
 - Keep sidebar dark teal in both themes; content area uses theme tokens
 - Prefer token colors (`bg-card`, `text-muted-foreground`, `hsl(var(--primary))`) over hard-coded light HSL
 - Add new subjects with the same card + nav patterns in `src/client/lib/nav.ts`
+- Reserve `.text-shine` for homepage hero quotes; use `.text-shine-accent` for key math numbers only
 
 **Don’t**
 
 - Introduce a second unrelated palette
-- Switch to Inter / system-ui as the primary UI font
+- Reintroduce Fraunces / Source Sans 3 without an explicit product decision
 - Overload the homepage with dense dashboards or stats strips
 - Hard-code light-only fills that break in `.dark`
 - Use path-based History API routing (HtmlService needs hash routes)
+- Apply shine gradients to every headline or practice prompt

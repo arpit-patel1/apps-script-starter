@@ -21,6 +21,8 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LongDivision, StandardAlgorithm } from '@/components/practice/AlgorithmVisuals';
+import { HighlightedPrompt } from '@/components/practice/HighlightedPrompt';
+import { MultipleChoiceOptions } from '@/components/practice/MultipleChoiceOptions';
 import { OptionPills } from '@/components/practice/OptionPills';
 import { useAuth } from '@/hooks/useAuth';
 import { gas } from '@/lib/gas';
@@ -49,6 +51,8 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
   const [type, setType] = useState<string | null>(null);
   const [problem, setProblem] = useState<Problem | null>(null);
   const [answer, setAnswer] = useState('');
+  const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
+  const [correctChoice, setCorrectChoice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [status, setStatus] = useState('');
@@ -62,6 +66,10 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
   const typeOptions = useMemo(() => typesForMode(meta, config), [meta, config]);
   const showReveal = !!config.revealOnly || !!config.showReveal;
   const revealOnly = !!config.revealOnly;
+  const isMultipleChoice =
+    !!config.multipleChoice ||
+    problem?.display === 'multiple_choice' ||
+    !!(problem?.choices && problem.choices.length);
 
   const hints = answerHints(config.mode, type) || {
     label: config.answerLabel || 'Your answer',
@@ -119,6 +127,8 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
     setFeedback(null);
     setAnswered(false);
     setAnswer('');
+    setSelectedChoice(null);
+    setCorrectChoice(null);
     try {
       const next = await gas.getNextProblem(
         withToken({
@@ -133,7 +143,9 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
       setStatus('');
       setTimeout(() => {
         if (revealOnly) nextRef.current?.blur();
-        else answerRef.current?.focus();
+        else if (!(config.multipleChoice || next.display === 'multiple_choice' || next.choices?.length)) {
+          answerRef.current?.focus();
+        }
       }, 0);
     } catch (error) {
       if (handleAuthFailure(error)) return;
@@ -145,6 +157,7 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
   }, [
     config.mode,
     config.showType,
+    config.multipleChoice,
     grade,
     difficulty,
     type,
@@ -161,13 +174,8 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meta, grade, difficulty, type, config.mode]);
 
-  async function checkAnswer() {
+  async function gradeAnswer(userAnswer: string) {
     if (!problem || answered) return;
-    if (!answer.trim()) {
-      setStatus('Enter an answer first.');
-      answerRef.current?.focus();
-      return;
-    }
     setBusy(true);
     setStatus('Checking…');
     try {
@@ -176,17 +184,19 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
           mode: problem.mode,
           id: problem.id,
           grade: problem.grade,
-          userAnswer: answer,
+          userAnswer,
           answerKind: problem.answerKind || null,
         }),
       );
       setStatus('');
       if (result.correct) {
+        setCorrectChoice(userAnswer);
         setFeedback({
           variant: 'success',
           text: 'Correct — nice work. Ready for the next one?',
         });
       } else {
+        setCorrectChoice(result.correctAnswer || null);
         setFeedback({
           variant: 'destructive',
           text: `Not quite. The correct answer is ${result.correctAnswer}.`,
@@ -200,6 +210,22 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function checkAnswer() {
+    if (!problem || answered) return;
+    if (!answer.trim()) {
+      setStatus('Enter an answer first.');
+      answerRef.current?.focus();
+      return;
+    }
+    await gradeAnswer(answer);
+  }
+
+  async function selectChoice(choice: string) {
+    if (!problem || answered || busy) return;
+    setSelectedChoice(choice);
+    await gradeAnswer(choice);
   }
 
   async function revealAnswer() {
@@ -351,9 +377,7 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
                 <StandardAlgorithm layout={problem.layout} />
               </div>
             ) : (
-              <p className="animate-pop-in font-display whitespace-pre-line text-2xl font-semibold leading-snug sm:text-3xl">
-                {problem?.prompt || 'Could not load a problem.'}
-              </p>
+              <HighlightedPrompt prompt={problem?.prompt || 'Could not load a problem.'} />
             )}
           </div>
 
@@ -363,7 +387,18 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
             </Alert>
           ) : null}
 
-          {!revealOnly && (
+          {isMultipleChoice && problem?.choices?.length ? (
+            <MultipleChoiceOptions
+              choices={problem.choices}
+              disabled={busy}
+              selected={selectedChoice}
+              correctAnswer={correctChoice}
+              answered={answered}
+              onSelect={(choice) => void selectChoice(choice)}
+            />
+          ) : null}
+
+          {!revealOnly && !isMultipleChoice && (
             <div className="space-y-2">
               <Label htmlFor="answer">{hints.label}</Label>
               <Input
@@ -389,31 +424,46 @@ export function PracticeShell({ config }: { config: PracticeModeConfig }) {
 
         <CardFooter className="flex-col items-stretch gap-3 px-5 pb-6">
           <div className="flex flex-wrap justify-center gap-3">
-            {!revealOnly && !answered && (
-              <Button className="min-w-[10rem]" disabled={busy} onClick={() => void checkAnswer()}>
-                Check answer
+            {!revealOnly && !isMultipleChoice && !answered && (
+              <Button
+                className="btn-shine-primary min-w-[10rem] text-[hsl(48_40%_98%)] hover:opacity-100"
+                disabled={busy}
+                onClick={() => void checkAnswer()}
+              >
+                <span className="text-shine-on-primary">Check answer</span>
               </Button>
             )}
             {showReveal && !answered && (
               <Button
-                className="min-w-[10rem]"
+                className={
+                  revealOnly
+                    ? 'btn-shine-primary min-w-[10rem] text-[hsl(48_40%_98%)] hover:opacity-100'
+                    : 'min-w-[10rem]'
+                }
                 variant={revealOnly ? 'default' : 'outline'}
                 disabled={busy}
                 onClick={() => void revealAnswer()}
               >
-                Reveal answer
+                <span className={revealOnly ? 'text-shine-on-primary' : 'text-shine'}>
+                  Reveal answer
+                </span>
               </Button>
             )}
             {answered && (
               <Button
                 ref={nextRef}
-                className="min-w-[10rem]"
+                className="btn-shine-primary min-w-[10rem] text-[hsl(48_40%_98%)] hover:opacity-100"
                 disabled={busy}
                 onClick={() => void loadProblem()}
               >
-                Next problem
+                <span className="text-shine-on-primary">Next problem</span>
               </Button>
             )}
+            {isMultipleChoice && !answered ? (
+              <p className="w-full text-center text-sm text-muted-foreground">
+                Tap A, B, C, or D to answer
+              </p>
+            ) : null}
           </div>
 
           {feedback && <Alert variant={feedback.variant}>{feedback.text}</Alert>}

@@ -148,6 +148,8 @@ export interface PracticeModeConfig {
   inputMode?: string;
   revealOnly?: boolean;
   showReveal?: boolean;
+  /** Tap A–D choices instead of typing (science quiz). */
+  multipleChoice?: boolean;
   typesKey?: keyof import('@/types/api').MetaResponse;
 }
 
@@ -359,9 +361,7 @@ export const PRACTICE_BY_ROUTE: Record<string, PracticeModeConfig> = {
     badge: 'Science quiz',
     showType: true,
     typeLabel: 'Topic',
-    answerLabel: 'Your answer',
-    answerPlaceholder: 'Type your answer',
-    inputMode: 'text',
+    multipleChoice: true,
     typesKey: 'scienceQuizTypes',
   },
 };

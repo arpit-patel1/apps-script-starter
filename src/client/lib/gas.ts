@@ -245,6 +245,21 @@ async function mockRun<T>(fn: GasFn, payload?: unknown): Promise<T> {
       } as T);
     }
 
+    if (mode === 'science_quiz') {
+      return delay({
+        id,
+        mode,
+        grade,
+        difficulty,
+        type: type || 'landforms',
+        display: 'multiple_choice',
+        prompt: 'Which landform would you find right next to the sea?',
+        choices: ['Desert', 'Coast or beach', 'Valley', 'Cave'],
+        hint: 'Topic: Science',
+        answerKind: 'geo',
+      } as T);
+    }
+
     return delay({
       id,
       mode,
@@ -267,10 +282,14 @@ async function mockRun<T>(fn: GasFn, payload?: unknown): Promise<T> {
 
   if (fn === 'checkAnswer') {
     const answer = String(data.userAnswer || '').trim().toLowerCase();
-    const correct = answer === '42' || answer === 'yes' || answer === 'clock';
+    const correct =
+      answer === '42' ||
+      answer === 'yes' ||
+      answer === 'clock' ||
+      answer === 'coast or beach';
     return delay({
       correct,
-      correctAnswer: correct ? answer : '42',
+      correctAnswer: correct ? String(data.userAnswer) : 'Coast or beach',
     } as T);
   }
 

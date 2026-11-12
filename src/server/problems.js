@@ -184,17 +184,21 @@ const createTextProblem = ({ mode, grade, type, difficulty, generate }) => {
   if (q.accepted) extra.accepted = q.accepted;
   if (Object.keys(extra).length) rememberExtra(id, extra);
 
-  return {
+  const problem = {
     id,
     mode,
     grade: Number(grade),
     type: q.type,
     difficulty: difficulty || 'medium',
-    display: 'text',
+    display: Array.isArray(q.choices) && q.choices.length ? 'multiple_choice' : 'text',
     prompt: q.prompt,
     hint: q.hint || null,
     answerKind: q.answerKind || (mode === 'missing_symbol' ? 'symbol' : null),
   };
+  if (Array.isArray(q.choices) && q.choices.length) {
+    problem.choices = q.choices.map(String);
+  }
+  return problem;
 };
 
 export const createRoundingProblem = ({ grade, type, difficulty } = {}) =>

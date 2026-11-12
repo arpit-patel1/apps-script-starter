@@ -13,14 +13,11 @@ export const doGet = () => {
 
   const title = 'Kids Homework Playground';
   const fileName = 'index.html';
+  // HtmlService.addMetaTag only allows a small whitelist (e.g. viewport).
+  // Apple web-app meta tags live in index.html + installAppIcons() instead.
   return HtmlService.createHtmlOutputFromFile(fileName)
     .setTitle(title)
     .setFaviconUrl(FAVICON_URL)
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
-    .addMetaTag('apple-mobile-web-app-capable', 'yes')
-    .addMetaTag('mobile-web-app-capable', 'yes')
-    .addMetaTag('apple-mobile-web-app-title', 'Playground')
-    .addMetaTag('apple-mobile-web-app-status-bar-style', 'black-translucent')
-    .addMetaTag('theme-color', '#1F6B56');
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 };

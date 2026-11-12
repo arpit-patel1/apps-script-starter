@@ -5,8 +5,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Fraunces', 'Georgia', 'serif'],
-        sans: ['"Source Sans 3"', 'ui-sans-serif', 'sans-serif'],
+        display: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"Geist Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -68,10 +69,15 @@ export default {
           '0%': { backgroundPosition: '200% 0' },
           '100%': { backgroundPosition: '-200% 0' },
         },
+        'text-shimmer': {
+          '0%': { backgroundPosition: '120% center' },
+          '100%': { backgroundPosition: '-120% center' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.4s ease-out both',
         'pop-in': 'pop-in 0.25s ease-out both',
+        'text-shimmer': 'text-shimmer 10s ease-in-out infinite',
       },
     },
   },

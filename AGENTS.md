@@ -22,6 +22,9 @@ This repo is the **Kids Homework Playground**: a Google Apps Script web app for 
 | Web app deployment | `AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ1uhd8B3-RjHH` |
 | Web app URL | https://script.google.com/macros/s/AKfycbwpwvR7kEorpjdCRVXNq4wMu1ACk_kVgLu6wVdeJS6z16_d6JHWeZyZ1uhd8B3-RjHH/exec |
 | Google Sites | https://sites.google.com/view/k2-playground-1/playground |
+| iPhone home-screen URL | https://arpit-patel1.github.io/apps-script-starter/app.html |
+
+**iPhone Add to Home Screen:** Do **not** add the raw `script.google.com/.../exec` URL — Apps Script runs in an iframe, so iOS ignores in-page icons and shows a gray tile. Open [`docs/app.html`](https://arpit-patel1.github.io/apps-script-starter/app.html) in Safari instead (icons live on that page), then Share → Add to Home Screen. Delete any old gray shortcut first. For Google Sites, upload `icons/apple-touch-icon.png` as the site favicon/branding image.
 
 Spreadsheet ID is also in `src/server/config.js`. Clasp `scriptId` is in `.clasp.json`.
 
@@ -87,7 +90,7 @@ Product and design specs live in [`specs/`](specs/). Implement against those spe
 
 Locked choices kids already like:
 
-- Fraunces (display) + Source Sans 3 (UI)
+- Geist (display + UI) + Geist Mono (algorithm boards); homepage hero quote may use `.text-shine`
 - Teal primary / warm paper background / orange accent
 - Dark sidebar, real shadcn/ui components + theme tokens
 - Light motion only (`fade-up`, `pop-in`, skeletons)

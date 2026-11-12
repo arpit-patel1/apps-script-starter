@@ -1,5 +1,6 @@
 import { ChevronDown, PanelLeftClose } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PlaygroundLogo } from '@/components/shell/PlaygroundLogo';
 import { NAV } from '@/lib/nav';
 import { cn } from '@/lib/utils';
 
@@ -29,17 +30,12 @@ export function Sidebar({
         open ? '' : '-translate-x-full md:hidden pointer-events-none',
       )}
     >
-      <div className="flex items-center gap-3 border-b border-sidebar-border px-4 py-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent font-display text-sm font-bold text-accent-foreground">
-          KP
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-lg font-semibold leading-none tracking-tight">Playground</p>
-          <p className="mt-1 text-xs text-sidebar-foreground/65">Homework lab</p>
-        </div>
+      {/* Taller brand block; no bottom border so it does not line up with main header */}
+      <div className="flex items-start gap-2 px-4 pb-5 pt-5">
+        <PlaygroundLogo className="min-w-0 flex-1" />
         <button
           type="button"
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           aria-label="Collapse sidebar"
           title="Collapse sidebar"
           onClick={onClose}
@@ -48,7 +44,9 @@ export function Sidebar({
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Activities">
+      <div className="mx-4 mb-2 h-px bg-sidebar-border/70" aria-hidden="true" />
+
+      <nav className="flex-1 overflow-y-auto px-3 pb-4 pt-2" aria-label="Activities">
         {NAV.map((item) => {
           if (item.type === 'link') {
             const active = route === item.route;

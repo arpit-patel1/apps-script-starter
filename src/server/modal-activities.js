@@ -74,19 +74,15 @@ export const generateScienceQuiz = ({ type } = {}) => {
     throw new Error('Pick a science topic.');
   }
   const data = modalGet('/science/quiz/random', { key });
-  const options = Array.isArray(data.options) ? data.options.map(String) : [];
-  const promptParts = [String(data.question || '').trim()];
-  if (options.length) {
-    promptParts.push(
-      options.map((option, index) => `${index + 1}. ${option}`).join('\n'),
-    );
-  }
+  const choices = Array.isArray(data.options) ? data.options.map(String) : [];
+  const answer = String(data.correctAnswer || data.answer || '').trim();
 
   return {
     type: key,
-    prompt: promptParts.filter(Boolean).join('\n'),
-    answer: String(data.correctAnswer || data.answer || '').trim(),
-    hint: data.subject ? `Topic: ${data.subject}` : 'Choose the best answer.',
+    prompt: String(data.question || '').trim(),
+    choices,
+    answer,
+    hint: data.subject ? `Topic: ${data.subject}` : 'Tap A, B, C, or D.',
     answerKind: 'geo',
   };
 };

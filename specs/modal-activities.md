@@ -18,7 +18,7 @@ Set in Apps Script: **Project Settings → Script properties**. Redeploy after f
 | `pattern` | `math/patterns` | `/math/pattern` | Types: number, shape, color; uses difficulty as `level` |
 | `riddle` | `ela/riddles` | `/riddles` | Reveal-only UI (no answer field / Check); server `revealAnswer` |
 | `fill_blank` | `ela/fill-blank` | `/sentence/fill-blank` | Difficulty query param |
-| `science_quiz` | `science/quiz` | `/science/quiz/keys` + `/science/quiz/random` | Topic pills from keys (cached ~1h) |
+| `science_quiz` | `science/quiz` | `/science/quiz/keys` + `/science/quiz/random` | Topic pills from keys (cached ~1h); client shows A–D choices (tap to grade, no typing) |
 
 All of these go through `requireUser(token)` like other practice APIs.
 
